@@ -64,6 +64,7 @@ impl NotificationsService {
         service
     }
 
+    // FIXME: Implement query params
     pub async fn get_notifications(&self) -> Result<NotificationsResponse, Error> {
         let path = String::from("/get_notifications");
         let response = self.client.get(path).await?;

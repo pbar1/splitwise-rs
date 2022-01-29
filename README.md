@@ -12,5 +12,5 @@ Splitwise SDK for Rust
 | Friends        |             |         |
 | Expenses       |             |         |
 | Comments       |             |         |
-| Notifications  | :rocket:    | partial |
+| Notifications  | partial     | partial |
 | Other          |             |         |
