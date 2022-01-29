@@ -1,8 +1,10 @@
+use crate::notifications::NotificationsService;
 use crate::users::UserService;
 use reqwest::header::AUTHORIZATION;
 use serde::Serialize;
 
 pub mod errors;
+pub mod notifications;
 pub mod users;
 
 const BASE_URL: &str = "https://secure.splitwise.com/api/v3.0";
@@ -61,8 +63,24 @@ impl Client {
         Ok(response)
     }
 
+    pub(crate) async fn delete(&self, path: String) -> Result<reqwest::Response, reqwest::Error> {
+        let url = format!("{}{}", self.base_url, path);
+        let response = self
+            .http_client
+            .delete(url)
+            .header(AUTHORIZATION, &self.authorization)
+            .send()
+            .await?;
+        Ok(response)
+    }
+
     pub fn users(&self) -> UserService {
         let service = UserService::new(self.clone());
+        service
+    }
+
+    pub fn notifications(&self) -> NotificationsService {
+        let service = NotificationsService::new(self.clone());
         service
     }
 }

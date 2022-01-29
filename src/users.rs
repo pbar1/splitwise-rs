@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone)]
 pub struct UserService {
-    client: crate::Client,
+    client: Client,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
