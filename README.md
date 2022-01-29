@@ -1,6 +1,6 @@
 # splitwise-rs
 
-Splitwise SDF for Rust
+Splitwise SDK for Rust
 
 ## Progress
 
