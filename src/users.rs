@@ -1,12 +1,9 @@
-use crate::errors::{ErrorForbiddenOrNotFound, ErrorUnauthorized};
-use crate::Client;
-use anyhow::{bail, Error};
-use reqwest::StatusCode;
+use crate::client::Client;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone)]
-pub struct UserService {
-    client: Client,
+#[derive(Debug)]
+pub struct UsersSvc<'c> {
+    client: &'c Client,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -62,73 +59,30 @@ pub struct UpdateUserRequest {
     pub default_currency: Option<String>,
 }
 
-impl UserService {
-    pub fn new(client: Client) -> UserService {
-        let service = UserService { client };
-        service
+impl<'c> UsersSvc<'c> {
+    pub fn new(client: &'c Client) -> Self {
+        Self { client }
     }
 
-    pub async fn get_current_user(&self) -> Result<UserResponse, Error> {
-        let path = String::from("/get_current_user");
+    pub async fn get_current_user(&self) -> Result<UserResponse, anyhow::Error> {
+        let path = "/get_current_user";
         let response = self.client.get(path).await?;
-        match response.status() {
-            StatusCode::OK => {
-                let decoded = response.json::<UserResponse>().await?;
-                Ok(decoded)
-            }
-            StatusCode::UNAUTHORIZED => {
-                let decoded = response.json::<ErrorUnauthorized>().await?;
-                bail!(decoded.error)
-            }
-            StatusCode::FORBIDDEN | StatusCode::NOT_FOUND => {
-                let decoded = response.json::<ErrorForbiddenOrNotFound>().await?;
-                bail!(decoded.errors.base.join("; "))
-            }
-            _ => bail!("unexpected HTTP status code: {}", response.status()),
-        }
+        Ok(response)
     }
 
-    pub async fn get_user(&self, id: String) -> Result<UserResponse, Error> {
+    pub async fn get_user(&self, id: &str) -> Result<UserResponse, anyhow::Error> {
         let path = format!("{}/{}", "/get_user", id);
-        let response = self.client.get(path).await?;
-        match response.status() {
-            StatusCode::OK => {
-                let decoded = response.json::<UserResponse>().await?;
-                Ok(decoded)
-            }
-            StatusCode::UNAUTHORIZED => {
-                let decoded = response.json::<ErrorUnauthorized>().await?;
-                bail!(decoded.error)
-            }
-            StatusCode::FORBIDDEN | StatusCode::NOT_FOUND => {
-                let decoded = response.json::<ErrorForbiddenOrNotFound>().await?;
-                bail!(decoded.errors.base.join("; "))
-            }
-            _ => bail!("unexpected HTTP status code: {}", response.status()),
-        }
+        let response = self.client.get(&path).await?;
+        Ok(response)
     }
 
     pub async fn update_user(
         &self,
         id: u64,
         updates: UpdateUserRequest,
-    ) -> Result<UserResponse, Error> {
+    ) -> Result<UserResponse, anyhow::Error> {
         let path = format!("{}/{}", "/update_user", id);
-        let response = self.client.post(path, &updates).await?;
-        match response.status() {
-            StatusCode::OK => {
-                let decoded = response.json::<UserResponse>().await?;
-                Ok(decoded)
-            }
-            StatusCode::UNAUTHORIZED => {
-                let decoded = response.json::<ErrorUnauthorized>().await?;
-                bail!(decoded.error)
-            }
-            StatusCode::FORBIDDEN | StatusCode::NOT_FOUND => {
-                let decoded = response.json::<ErrorForbiddenOrNotFound>().await?;
-                bail!(decoded.errors.base.join("; "))
-            }
-            _ => bail!("unexpected HTTP status code: {}", response.status()),
-        }
+        let response = self.client.post(&path, &updates).await?;
+        Ok(response)
     }
 }

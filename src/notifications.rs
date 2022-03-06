@@ -1,13 +1,10 @@
-use crate::errors::{ErrorForbiddenOrNotFound, ErrorUnauthorized};
-use crate::Client;
-use anyhow::{bail, Error};
-use reqwest::StatusCode;
+use crate::client::Client;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-#[derive(Debug, Clone)]
-pub struct NotificationsService {
-    client: Client,
+#[derive(Debug)]
+pub struct NotificationsSvc<'c> {
+    client: &'c Client,
 }
 
 // FIXME: Check if any more fields are nullable
@@ -58,41 +55,58 @@ pub enum NotificationType {
     FriendCurrencyConversion,
 }
 
-impl NotificationsService {
-    pub fn new(client: Client) -> NotificationsService {
-        let service = NotificationsService { client };
-        service
+impl<'c> NotificationsSvc<'c> {
+    pub fn new(client: &'c Client) -> Self {
+        Self { client }
     }
 
     // FIXME: Implement query params
-    pub async fn get_notifications(&self) -> Result<NotificationsResponse, Error> {
-        let path = String::from("/get_notifications");
+    pub async fn get_notifications(&self) -> Result<NotificationsResponse, anyhow::Error> {
+        let path = "/get_notifications";
         let response = self.client.get(path).await?;
-        match response.status() {
-            StatusCode::OK => {
-                let decoded = response.json::<NotificationsResponse>().await?;
-                Ok(decoded)
-            }
-            StatusCode::UNAUTHORIZED => {
-                let decoded = response.json::<ErrorUnauthorized>().await?;
-                bail!(decoded.error)
-            }
-            StatusCode::FORBIDDEN | StatusCode::NOT_FOUND => {
-                let decoded = response.json::<ErrorForbiddenOrNotFound>().await?;
-                bail!(decoded.errors.base.join("; "))
-            }
-            _ => bail!("unexpected HTTP status code: {}", response.status()),
-        }
+        Ok(response)
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+    use wiremock::matchers::any;
+    use wiremock::{Mock, MockServer, ResponseTemplate};
+
     #[tokio::test]
     async fn get_notifications_works() {
-        let api_key = std::env::var("SPLITWISE_API_KEY").unwrap();
-        let client = crate::Client::new_default_http_client(api_key);
-        let result = client.notifications().get_notifications().await.unwrap();
+        let mock_server = MockServer::start().await;
+
+        // FIXME match not just any
+        Mock::given(any()).respond_with(ResponseTemplate::new(200).set_body_raw(r##"
+{
+  "notifications": [
+    {
+      "id": 32514315,
+      "type": 0,
+      "created_at": "2019-08-24T14:15:22Z",
+      "created_by": 2,
+      "source": {
+        "type": "Expense",
+        "id": 865077,
+        "url": "string"
+      },
+      "image_url": "https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-venmo.png",
+      "image_shape": "square",
+      "content": "<strong>You</strong> paid <strong>Jon H.</strong>.<br><font color=\\\"#5bc5a7\\\">You paid $23.45</font>"
+    }
+  ]
+}
+"##, "application/json")).mount(&mock_server).await;
+
+        let result = Client::default()
+            .with_base_url(mock_server.uri())
+            .notifications()
+            .get_notifications()
+            .await
+            .unwrap();
+
         assert_eq!(result, result);
     }
 }
