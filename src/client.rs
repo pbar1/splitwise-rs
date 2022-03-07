@@ -4,7 +4,10 @@ use secrecy::{ExposeSecret, Secret};
 use serde::{de::DeserializeOwned, Serialize};
 use url::Url;
 
-use crate::{errors, notifications::NotificationsSvc, other::OtherSvc, users::UsersSvc};
+use crate::{
+    errors, expenses::ExpensesSvc, notifications::NotificationsSvc, other::OtherSvc,
+    users::UsersSvc,
+};
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -126,6 +129,11 @@ impl Client {
     /// Users API group.
     pub fn users(&self) -> UsersSvc {
         UsersSvc::new(self)
+    }
+
+    /// Expenses API group.
+    pub fn expenses(&self) -> ExpensesSvc {
+        ExpensesSvc::new(self)
     }
 
     /// Notifications API group.

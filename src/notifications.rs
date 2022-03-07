@@ -1,9 +1,6 @@
-use chrono::Utc;
-use url::Url;
-
 use crate::{
     client::Client,
-    model::{Notification, NotificationsWrapper},
+    model::{GetNotificationsRequest, Notification, NotificationsWrapper},
 };
 
 #[derive(Debug)]
@@ -19,21 +16,12 @@ impl<'c> NotificationsSvc<'c> {
     /// [Get notifications](https://dev.splitwise.com/#tag/notifications/paths/~1get_notifications/get)
     pub async fn get_notifications(
         &self,
-        updated_after: Option<chrono::DateTime<Utc>>,
-        limit: Option<i64>,
+        request: GetNotificationsRequest,
     ) -> Result<Vec<Notification>, anyhow::Error> {
         let mut url = self.client.base_url.clone();
         url.set_path("get_notifications");
-
-        let mut q = Vec::new();
-        if let Some(x) = updated_after {
-            q.push(("updated_after", x.to_rfc3339()));
-        }
-        if let Some(x) = limit {
-            q.push(("limit", format!("{}", x)));
-        }
-        let url = Url::parse_with_params(url.as_str(), q)?;
-
+        let query = serde_qs::to_string(&request)?;
+        url.set_query(Some(&query));
         let response: NotificationsWrapper = self.client.get(url).await?;
         Ok(response.notifications)
     }
@@ -58,7 +46,7 @@ mod tests {
             .with_base_url(server.base_url().as_str())
             .unwrap()
             .notifications()
-            .get_notifications(None, Some(10))
+            .get_notifications(GetNotificationsRequest::default())
             .await
             .unwrap();
         mock.assert();

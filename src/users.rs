@@ -24,7 +24,7 @@ impl<'c> UsersSvc<'c> {
     /// [Get information about another user](https://dev.splitwise.com/#tag/users/paths/~1get_user~1{id}/get)
     pub async fn get_user(&self, id: i64) -> Result<User, anyhow::Error> {
         let mut url = self.client.base_url.clone();
-        url.set_path(format!("get_user/{}", id).as_str());
+        url.set_path(&format!("get_user/{}", id));
         let response: UserWrapper = self.client.get(url).await?;
         Ok(response.user)
     }
@@ -36,7 +36,7 @@ impl<'c> UsersSvc<'c> {
         updates: UpdateUserRequest,
     ) -> Result<User, anyhow::Error> {
         let mut url = self.client.base_url.clone();
-        url.set_path(format!("update_user/{}", id).as_str());
+        url.set_path(&format!("update_user/{}", id));
         let response: UserWrapper = self.client.post(url, &updates).await?;
         Ok(response.user)
     }

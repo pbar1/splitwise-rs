@@ -1,19 +1,8 @@
 use std::collections::HashMap;
 
+use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-
-// -----------------------------------------------------------------------------
-// Common/Shared
-// -----------------------------------------------------------------------------
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Image {
-    pub small: Option<String>,
-    pub medium: Option<String>,
-    pub large: Option<String>,
-    pub xlarge: Option<String>,
-}
 
 // -----------------------------------------------------------------------------
 // Users
@@ -37,6 +26,14 @@ pub struct User {
     pub notifications: Option<UserNotifications>,
     pub default_currency: Option<String>,
     pub locale: Option<String>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Image {
+    pub small: Option<String>,
+    pub medium: Option<String>,
+    pub large: Option<String>,
+    pub xlarge: Option<String>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -73,11 +70,22 @@ pub struct UpdateUserRequest {
 // -----------------------------------------------------------------------------
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct ExpenseWrapper {
+    pub expense: Expense,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub(crate) struct ExpensesWrapper {
+    pub expenses: Vec<Expense>,
+    pub errors: Option<HashMap<String, Vec<String>>>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Expense {
     pub cost: String,
     pub description: String,
     pub details: String,
-    pub date: String,
+    pub date: String, // TODO: chrono
     pub repeat_interval: String,
     pub currency_code: String,
     pub category_id: i64,
@@ -93,11 +101,11 @@ pub struct Expense {
     pub payment: bool,
     pub transaction_confirmed: bool,
     pub repayments: Vec<Repayment>,
-    pub created_at: String,
+    pub created_at: String, // TODO: chrono
     pub created_by: User,
-    pub updated_at: String,
+    pub updated_at: String, // TODO: chrono
     pub updated_by: User,
-    pub deleted_at: String,
+    pub deleted_at: String, // TODO: chrono
     pub deleted_by: User,
     pub category: Category,
     pub receipt: Receipt,
@@ -135,9 +143,34 @@ pub struct Comment {
     pub comment_type: String,
     pub relation_type: String,
     pub relation_id: i64,
-    pub created_at: String,
-    pub deleted_at: String,
+    pub created_at: String, // TODO: chrono
+    pub deleted_at: String, // TODO: chrono
     pub user: Option<User>, // TODO: Guessing this is the main "User" type
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GetExpensesRequest {
+    pub group_id: Option<i64>,
+    pub friend_id: Option<i64>,
+    pub dated_after: Option<chrono::DateTime<Utc>>,
+    pub dated_before: Option<chrono::DateTime<Utc>>,
+    pub updated_after: Option<chrono::DateTime<Utc>>,
+    pub updated_before: Option<chrono::DateTime<Utc>>,
+    pub limit: Option<i64>,
+    pub offset: Option<i64>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CreateExpenseEquallyRequest {
+    pub cost: String,
+    pub description: String,
+    pub details: String,
+    pub date: String,
+    pub repeat_interval: String,
+    pub currency_code: String,
+    pub category_id: i64,
+    pub group_id: i64,
+    pub(crate) split_equally: bool, // Must always be true for this request
 }
 
 // -----------------------------------------------------------------------------
@@ -149,6 +182,12 @@ pub struct Comment {
 // -----------------------------------------------------------------------------
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct GetNotificationsRequest {
+    pub updated_after: Option<chrono::DateTime<Utc>>,
+    pub limit: Option<i64>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NotificationsWrapper {
     pub notifications: Vec<Notification>,
 }
@@ -158,7 +197,7 @@ pub struct Notification {
     pub id: i64,
     #[serde(rename = "type")]
     pub notification_type: NotificationType,
-    pub created_at: String,
+    pub created_at: String, // TODO: chrono
     pub created_by: i64,
     pub source: NotificationSource,
     pub image_url: String,

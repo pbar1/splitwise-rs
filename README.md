@@ -10,7 +10,7 @@ Splitwise SDK for Rust
 | Users          | 3/3         | 3/3         |
 | Groups         | 0/7         | 0/7         |
 | Friends        | 0/5         | 0/5         |
-| Expenses       | 0/6         | 0/6         |
+| Expenses       | 2.5/6       | 2.5/6       |
 | Comments       | 0/3         | 0/3         |
 | Notifications  | 1/1         | 1/1         |
 | Other          | 3/3         | 3/3         |
