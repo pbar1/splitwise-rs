@@ -1,0 +1,19 @@
+{
+  "id": 0,
+  "first_name": "Ada",
+  "last_name": "Lovelace",
+  "email": "ada@example.com",
+  "registration_status": "confirmed",
+  "picture": {
+    "small": "string",
+    "medium": "string",
+    "large": "string"
+  },
+  "notifications_read": "2017-06-02T20:21:57Z",
+  "notifications_count": 12,
+  "notifications": {
+    "added_as_friend": true
+  },
+  "default_currency": "USD",
+  "locale": "en"
+}

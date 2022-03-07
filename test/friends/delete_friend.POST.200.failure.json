@@ -1,0 +1,8 @@
+{
+  "success": false,
+  "errors": {
+    "base": [
+      "There was an issue deleting that friendship"
+    ]
+  }
+}

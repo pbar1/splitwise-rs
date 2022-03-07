@@ -1,0 +1,9 @@
+{
+  "success": false,
+  "user": null,
+  "errors": {
+    "base": [
+      "That user cannot be a member of this group"
+    ]
+  }
+}

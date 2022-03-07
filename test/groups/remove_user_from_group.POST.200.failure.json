@@ -1,0 +1,8 @@
+{
+  "success": false,
+  "errors": {
+    "base": [
+      "The user has a non-zero balance"
+    ]
+  }
+}

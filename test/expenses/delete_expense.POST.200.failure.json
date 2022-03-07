@@ -1,0 +1,8 @@
+{
+  "success": false,
+  "errors": {
+    "expense": [
+      "does not exist, or has already been deleted"
+    ]
+  }
+}

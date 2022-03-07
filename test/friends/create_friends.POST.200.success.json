@@ -1,0 +1,6 @@
+{
+  "friends__0__first_name": "Alan",
+  "friends__0__last_name": "Turing",
+  "friends__0__email": "alan@example.org",
+  "friends__1__email": "existing_user@example.com"
+}

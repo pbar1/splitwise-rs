@@ -1,0 +1,18 @@
+{
+  "notifications": [
+    {
+      "id": 32514315,
+      "type": 0,
+      "created_at": "2019-08-24T14:15:22Z",
+      "created_by": 2,
+      "source": {
+        "type": "Expense",
+        "id": 865077,
+        "url": "string"
+      },
+      "image_url": "https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-venmo.png",
+      "image_shape": "square",
+      "content": "<strong>You</strong> paid <strong>Jon H.</strong>.<br><font color=\\\"#5bc5a7\\\">You paid $23.45</font>"
+    }
+  ]
+}

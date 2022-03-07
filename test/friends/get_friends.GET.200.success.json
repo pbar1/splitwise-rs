@@ -1,0 +1,34 @@
+{
+  "friends": [
+    {
+      "id": 0,
+      "first_name": "Ada",
+      "last_name": "Lovelace",
+      "email": "ada@example.com",
+      "registration_status": "confirmed",
+      "picture": {
+        "small": "string",
+        "medium": "string",
+        "large": "string"
+      },
+      "groups": [
+        {
+          "group_id": 571,
+          "balance": [
+            {
+              "currency_code": "USD",
+              "amount": "414.5"
+            }
+          ]
+        }
+      ],
+      "balance": [
+        {
+          "currency_code": "USD",
+          "amount": "414.5"
+        }
+      ],
+      "updated_at": "2019-08-24T14:15:22Z"
+    }
+  ]
+}

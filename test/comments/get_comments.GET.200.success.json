@@ -1,0 +1,14 @@
+{
+  "comments": [
+    {
+      "id": 79800950,
+      "content": "John D. updated this transaction: - The cost changed from $6.99 to $8.99",
+      "comment_type": "System",
+      "relation_type": "ExpenseComment",
+      "relation_id": 855870953,
+      "created_at": "2019-08-24T14:15:22Z",
+      "deleted_at": "2019-08-24T14:15:22Z",
+      "user": null
+    }
+  ]
+}

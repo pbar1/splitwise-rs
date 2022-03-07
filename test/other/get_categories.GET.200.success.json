@@ -1,0 +1,36 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "Utilities",
+      "icon": "https://s3.amazonaws.com/splitwise/uploads/category/icon/square/utilities/cleaning.png",
+      "icon_types": {
+        "slim": {
+          "small": "http://example.com",
+          "large": "http://example.com"
+        },
+        "square": {
+          "large": "http://example.com",
+          "xlarge": "http://example.com"
+        }
+      },
+      "subcategories": [
+        {
+          "id": 48,
+          "name": "Cleaning",
+          "icon": "https://s3.amazonaws.com/splitwise/uploads/category/icon/square/utilities/cleaning.png",
+          "icon_types": {
+            "slim": {
+              "small": "http://example.com",
+              "large": "http://example.com"
+            },
+            "square": {
+              "large": "http://example.com",
+              "xlarge": "http://example.com"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
