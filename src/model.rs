@@ -61,6 +61,90 @@ pub struct UpdateUserRequest {
 }
 
 // -----------------------------------------------------------------------------
+// Groups
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// Friends
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
+// Expenses
+// -----------------------------------------------------------------------------
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Expense {
+    pub cost: String,
+    pub description: String,
+    pub details: String,
+    pub date: String,
+    pub repeat_interval: String,
+    pub currency_code: String,
+    pub category_id: i64,
+    pub id: i64,
+    pub group_id: i64,
+    pub friendship_id: i64,
+    pub expense_bundle_id: i64,
+    pub repeats: bool,
+    pub email_reminder: bool,
+    pub email_reminder_in_advance: Option<i64>,
+    pub next_repeat: String,
+    pub comments_count: i64,
+    pub payment: bool,
+    pub transaction_confirmed: bool,
+    pub repayments: Vec<Repayment>,
+    pub created_at: String,
+    pub created_by: User,
+    pub updated_at: String,
+    pub updated_by: User,
+    pub deleted_at: String,
+    pub deleted_by: User,
+    pub category: Category,
+    pub receipt: Receipt,
+    pub users: Vec<ExpenseUser>,
+    pub comments: Vec<Comment>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Repayment {
+    pub from: i64,
+    pub to: i64,
+    pub amount: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Receipt {
+    pub large: String,
+    pub original: String,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExpenseUser {
+    pub user: User,
+    pub user_id: i64,
+    pub paid_share: String,
+    pub owed_share: String,
+    pub net_balance: String,
+}
+
+// TODO: This may move into the "comments" section
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Comment {
+    pub id: i64,
+    pub content: String,
+    pub comment_type: String,
+    pub relation_type: String,
+    pub relation_id: i64,
+    pub created_at: String,
+    pub deleted_at: String,
+    pub user: Option<User>, // TODO: Guessing this is the main "User" type
+}
+
+// -----------------------------------------------------------------------------
+// Comments
+// -----------------------------------------------------------------------------
+
+// -----------------------------------------------------------------------------
 // Notifications
 // -----------------------------------------------------------------------------
 
@@ -154,71 +238,4 @@ pub struct ParseSentenceResponse {
     pub valid: bool,
     pub confidence: f64,
     pub error: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Expense {
-    pub cost: String,
-    pub description: String,
-    pub details: String,
-    pub date: String,
-    pub repeat_interval: String,
-    pub currency_code: String,
-    pub category_id: i64,
-    pub id: i64,
-    pub group_id: i64,
-    pub friendship_id: i64,
-    pub expense_bundle_id: i64,
-    pub repeats: bool,
-    pub email_reminder: bool,
-    pub email_reminder_in_advance: Option<i64>,
-    pub next_repeat: String,
-    pub comments_count: i64,
-    pub payment: bool,
-    pub transaction_confirmed: bool,
-    pub repayments: Vec<Repayment>,
-    pub created_at: String,
-    pub created_by: User,
-    pub updated_at: String,
-    pub updated_by: User,
-    pub deleted_at: String,
-    pub deleted_by: User,
-    pub category: Category,
-    pub receipt: Receipt,
-    pub users: Vec<ExpenseUser>,
-    pub comments: Vec<Comment>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Repayment {
-    pub from: i64,
-    pub to: i64,
-    pub amount: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Receipt {
-    pub large: String,
-    pub original: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ExpenseUser {
-    pub user: User,
-    pub user_id: i64,
-    pub paid_share: String,
-    pub owed_share: String,
-    pub net_balance: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Comment {
-    pub id: i64,
-    pub content: String,
-    pub comment_type: String,
-    pub relation_type: String,
-    pub relation_id: i64,
-    pub created_at: String,
-    pub deleted_at: String,
-    pub user: Option<User>, // TODO: Guessing this is the main "User" type
 }
