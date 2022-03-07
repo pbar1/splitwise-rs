@@ -1,63 +1,14 @@
-use serde::{Deserialize, Serialize};
-
-use crate::client::Client;
+use crate::{
+    client::Client,
+    model::{
+        CategoriesWrapper, Category, CurrenciesWrapper, Currency, ParseSentenceRequest,
+        ParseSentenceResponse,
+    },
+};
 
 #[derive(Debug)]
 pub struct OtherSvc<'c> {
     client: &'c Client,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub(crate) struct CurrenciesWrapper {
-    pub currencies: Vec<Currency>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Currency {
-    pub currency_code: String,
-    pub unit: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub(crate) struct CategoriesWrapper {
-    pub categories: Vec<Category>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Category {
-    pub id: i64,
-    pub name: String,
-    pub icon: String,
-    pub icon_types: IconTypes,
-    pub subcategories: Option<Vec<Category>>,
-}
-
-// FIXME: Are specific "IconTypes" actually defined concretely?
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct IconTypes {
-    pub slim: Slim,
-    pub square: Square,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Slim {
-    pub small: String,
-    pub large: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Square {
-    pub large: String,
-    pub xlarge: String,
-}
-
-// FIXME: Implement parse_sentence
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ParseSentenceRequest {
-    pub input: String,
-    pub friend_id: Option<i64>,
-    pub group_id: Option<i64>,
-    pub autosave: bool,
 }
 
 impl<'c> OtherSvc<'c> {
@@ -65,60 +16,94 @@ impl<'c> OtherSvc<'c> {
         Self { client }
     }
 
+    /// [Supported currencies](https://dev.splitwise.com/#tag/other/paths/~1get_currencies/get)
     pub async fn get_currencies(&self) -> Result<Vec<Currency>, anyhow::Error> {
-        let path = "/get_currencies";
-        let response: CurrenciesWrapper = self.client.get(path).await?;
+        let mut url = self.client.base_url.clone();
+        url.set_path("get_currencies");
+        let response: CurrenciesWrapper = self.client.get(url).await?;
         Ok(response.currencies)
     }
 
+    /// [Supported categories](https://dev.splitwise.com/#tag/other/paths/~1get_categories/get)
     pub async fn get_categories(&self) -> Result<Vec<Category>, anyhow::Error> {
-        let path = "/get_categories";
-        let response: CategoriesWrapper = self.client.get(path).await?;
+        let mut url = self.client.base_url.clone();
+        url.set_path("get_categories");
+        let response: CategoriesWrapper = self.client.get(url).await?;
         Ok(response.categories)
+    }
+
+    /// [Parse sentence into an expense](https://dev.splitwise.com/#tag/other/paths/~1parse_sentence/post)
+    pub async fn parse_sentence(
+        &self,
+        request: ParseSentenceRequest,
+    ) -> Result<ParseSentenceResponse, anyhow::Error> {
+        let mut url = self.client.base_url.clone();
+        url.set_path("parse_sentence");
+        let response: ParseSentenceResponse = self.client.post(url, &request).await?;
+        Ok(response)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
-
-    use wiremock::{matchers, Mock, MockServer, ResponseTemplate};
+    use httpmock::prelude::*;
 
     use super::*;
 
     #[tokio::test]
     async fn get_currencies_success() {
-        let mock_server = MockServer::start().await;
-
-        let body = fs::read("test/other/get_currencies.GET.response.200.json").unwrap();
-        Mock::given(matchers::any())
-            .respond_with(ResponseTemplate::new(200).set_body_raw(body, "application/json"))
-            .mount(&mock_server)
-            .await;
-
+        let server = MockServer::start();
+        let mock = server.mock(|when, then| {
+            when.method(GET).path("/get_currencies");
+            then.status(200)
+                .header("Content-Type", "application/json")
+                .body_from_file("test/other/get_currencies.GET.200.success.json");
+        });
         Client::default()
-            .with_base_url(mock_server.uri())
+            .with_base_url(server.base_url().as_str())
+            .unwrap()
             .other()
             .get_currencies()
             .await
             .unwrap();
+        mock.assert();
     }
 
     #[tokio::test]
     async fn get_categories_success() {
-        let mock_server = MockServer::start().await;
-
-        let body = fs::read("test/other/get_categories.GET.response.200.json").unwrap();
-        Mock::given(matchers::any())
-            .respond_with(ResponseTemplate::new(200).set_body_raw(body, "application/json"))
-            .mount(&mock_server)
-            .await;
-
+        let server = MockServer::start();
+        let mock = server.mock(|when, then| {
+            when.method(GET).path("/get_categories");
+            then.status(200)
+                .header("Content-Type", "application/json")
+                .body_from_file("test/other/get_categories.GET.200.success.json");
+        });
         Client::default()
-            .with_base_url(mock_server.uri())
+            .with_base_url(server.base_url().as_str())
+            .unwrap()
             .other()
             .get_categories()
             .await
             .unwrap();
+        mock.assert();
+    }
+
+    #[tokio::test]
+    async fn parse_sentence_success() {
+        let server = MockServer::start();
+        let mock = server.mock(|when, then| {
+            when.method(POST).path("/parse_sentence");
+            then.status(200)
+                .header("Content-Type", "application/json")
+                .body_from_file("test/other/parse_sentence.POST.200.success.json");
+        });
+        Client::default()
+            .with_base_url(server.base_url().as_str())
+            .unwrap()
+            .other()
+            .parse_sentence(ParseSentenceRequest::default())
+            .await
+            .unwrap();
+        mock.assert();
     }
 }

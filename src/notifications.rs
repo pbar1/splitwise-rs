@@ -1,59 +1,14 @@
-use serde::{Deserialize, Serialize};
-use serde_repr::{Deserialize_repr, Serialize_repr};
+use chrono::Utc;
+use url::Url;
 
-use crate::client::Client;
+use crate::{
+    client::Client,
+    model::{Notification, NotificationsWrapper},
+};
 
 #[derive(Debug)]
 pub struct NotificationsSvc<'c> {
     client: &'c Client,
-}
-
-// FIXME: Check if any more fields are nullable
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct NotificationsResponse {
-    pub notifications: Vec<Notification>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Notification {
-    pub id: u64,
-    #[serde(rename = "type")]
-    pub notification_type: NotificationType,
-    pub created_at: String,
-    pub created_by: u64,
-    pub source: Source,
-    pub image_url: String,
-    pub image_shape: String,
-    pub content: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Source {
-    #[serde(rename = "type")]
-    pub source_type: String,
-    pub id: i64,
-    pub url: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize_repr, Deserialize_repr)]
-#[repr(u8)]
-pub enum NotificationType {
-    ExpenseAdded,
-    ExpenseUpdated,
-    ExpenseDeleted,
-    CommentAdded,
-    AddedToGroup,
-    RemovedFromGroup,
-    GroupDeleted,
-    GroupSettingsChanged,
-    AddedAsFriend,
-    RemovedAsFriend,
-    News, // A URL should be included
-    DebtSimplification,
-    GroupUndeleted,
-    ExpenseUndeleted,
-    GroupCurrencyConversion,
-    FriendCurrencyConversion,
 }
 
 impl<'c> NotificationsSvc<'c> {
@@ -61,53 +16,51 @@ impl<'c> NotificationsSvc<'c> {
         Self { client }
     }
 
-    // FIXME: Implement query params
-    pub async fn get_notifications(&self) -> Result<NotificationsResponse, anyhow::Error> {
-        let path = "/get_notifications";
-        let response = self.client.get(path).await?;
-        Ok(response)
+    /// [Get notifications](https://dev.splitwise.com/#tag/notifications/paths/~1get_notifications/get)
+    pub async fn get_notifications(
+        &self,
+        updated_after: Option<chrono::DateTime<Utc>>,
+        limit: Option<i64>,
+    ) -> Result<Vec<Notification>, anyhow::Error> {
+        let mut url = self.client.base_url.clone();
+        url.set_path("get_notifications");
+
+        let mut q = Vec::new();
+        if let Some(x) = updated_after {
+            q.push(("updated_after", x.to_rfc3339()));
+        }
+        if let Some(x) = limit {
+            q.push(("limit", format!("{}", x)));
+        }
+        let url = Url::parse_with_params(url.as_str(), q)?;
+
+        let response: NotificationsWrapper = self.client.get(url).await?;
+        Ok(response.notifications)
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use wiremock::{matchers::any, Mock, MockServer, ResponseTemplate};
+    use httpmock::prelude::*;
 
     use super::*;
 
     #[tokio::test]
-    async fn get_notifications_works() {
-        let mock_server = MockServer::start().await;
-
-        // FIXME match not just any
-        Mock::given(any()).respond_with(ResponseTemplate::new(200).set_body_raw(r##"
-{
-  "notifications": [
-    {
-      "id": 32514315,
-      "type": 0,
-      "created_at": "2019-08-24T14:15:22Z",
-      "created_by": 2,
-      "source": {
-        "type": "Expense",
-        "id": 865077,
-        "url": "string"
-      },
-      "image_url": "https://s3.amazonaws.com/splitwise/uploads/notifications/v2/0-venmo.png",
-      "image_shape": "square",
-      "content": "<strong>You</strong> paid <strong>Jon H.</strong>.<br><font color=\\\"#5bc5a7\\\">You paid $23.45</font>"
-    }
-  ]
-}
-"##, "application/json")).mount(&mock_server).await;
-
-        let result = Client::default()
-            .with_base_url(mock_server.uri())
+    async fn get_notifications_success() {
+        let server = MockServer::start();
+        let mock = server.mock(|when, then| {
+            when.method(GET).path("/get_notifications");
+            then.status(200)
+                .header("Content-Type", "application/json")
+                .body_from_file("test/notifications/get_notifications.GET.200.success.json");
+        });
+        Client::default()
+            .with_base_url(server.base_url().as_str())
+            .unwrap()
             .notifications()
-            .get_notifications()
+            .get_notifications(None, Some(10))
             .await
             .unwrap();
-
-        assert_eq!(result, result);
+        mock.assert();
     }
 }

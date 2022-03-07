@@ -5,6 +5,7 @@ pub mod errors;
 pub mod expenses;
 pub mod friends;
 pub mod groups;
+pub mod model;
 pub mod notifications;
 pub mod other;
 pub mod users;

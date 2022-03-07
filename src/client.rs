@@ -2,22 +2,25 @@ use anyhow::bail;
 use reqwest::{header, StatusCode};
 use secrecy::{ExposeSecret, Secret};
 use serde::{de::DeserializeOwned, Serialize};
+use url::Url;
 
 use crate::{errors, notifications::NotificationsSvc, other::OtherSvc, users::UsersSvc};
 
 #[derive(Debug, Clone)]
 pub struct Client {
     http_client: reqwest::Client,
-    base_url: String,
+    pub(crate) base_url: Url,
     api_key: Secret<String>,
 }
 
 impl Default for Client {
+    /// Creates a default Splitwise API client using a default Reqwest HTTP client, the official
+    /// Splitwise API URL, and an API key sourced from the environment variable `SPLITWISE_API_KEY`.
     fn default() -> Self {
         let http_client = reqwest::Client::default();
-        let base_url = String::from("https://secure.splitwise.com/api/v3.0");
+        let base_url = Url::parse("https://secure.splitwise.com/api/v3.0").unwrap();
         let api_key: Secret<String> = std::env::var("SPLITWISE_API_KEY")
-            .unwrap_or(String::from(""))
+            .unwrap_or_else(|_| String::from(""))
             .into();
         Self {
             http_client,
@@ -28,6 +31,7 @@ impl Default for Client {
 }
 
 impl Client {
+    /// Builds a new Splitwise client from the current one, with the given HTTP client as an override.
     pub fn with_http_client(self, http_client: reqwest::Client) -> Self {
         Self {
             http_client,
@@ -36,14 +40,17 @@ impl Client {
         }
     }
 
-    pub fn with_base_url(self, base_url: String) -> Self {
-        Self {
+    /// Builds a new Splitwise client from the current one, with the given API base URL as an override.
+    pub fn with_base_url(self, base_url: &str) -> Result<Self, anyhow::Error> {
+        let base_url = Url::parse(base_url)?;
+        Ok(Self {
             http_client: self.http_client,
             base_url,
             api_key: self.api_key,
-        }
+        })
     }
 
+    /// Builds a new Splitwise client from the current one, with the given API key as an override.
     pub fn with_api_key(self, api_key: Secret<String>) -> Self {
         Self {
             http_client: self.http_client,
@@ -52,7 +59,8 @@ impl Client {
         }
     }
 
-    pub(crate) async fn parse_response<T>(
+    /// Decodes HTTP response into Splitwise API types or errors.
+    pub(crate) async fn process_response<T>(
         &self,
         response: reqwest::Response,
     ) -> Result<T, anyhow::Error>
@@ -77,11 +85,10 @@ impl Client {
     }
 
     /// Perform an HTTP GET wrapped with auth.
-    pub(crate) async fn get<T>(&self, path: &str) -> Result<T, anyhow::Error>
+    pub(crate) async fn get<T>(&self, url: Url) -> Result<T, anyhow::Error>
     where
         T: DeserializeOwned,
     {
-        let url = format!("{}{}", self.base_url, path);
         let response = self
             .http_client
             .get(url)
@@ -91,42 +98,17 @@ impl Client {
             )
             .send()
             .await?;
-        let payload = self.parse_response(response).await?;
+        let payload = self.process_response(response).await?;
         Ok(payload)
     }
 
-    /// Perform an HTTP GET wrapped with auth.
-    pub(crate) async fn get_with_query<T, S>(
-        &self,
-        path: &str,
-        query: &S,
-    ) -> Result<T, anyhow::Error>
-    where
-        T: DeserializeOwned,
-        S: Serialize + ?Sized,
-    {
-        let url = format!("{}{}", self.base_url, path);
-        let response = self
-            .http_client
-            .get(url)
-            .header(
-                header::AUTHORIZATION,
-                format!("Bearer {}", &self.api_key.expose_secret()),
-            )
-            .query(query)
-            .send()
-            .await?;
-        let payload = self.parse_response(response).await?;
-        Ok(payload)
-    }
-
+    // TODO: Can body be consumed rather than be a reference?
     /// Perform an HTTP POST wrapped with auth.
-    pub(crate) async fn post<T, S>(&self, path: &str, body: &S) -> Result<T, anyhow::Error>
+    pub(crate) async fn post<T, S>(&self, url: Url, body: &S) -> Result<T, anyhow::Error>
     where
         T: DeserializeOwned,
         S: Serialize + ?Sized,
     {
-        let url = format!("{}{}", self.base_url, path);
         let response = self
             .http_client
             .post(url)
@@ -137,7 +119,7 @@ impl Client {
             .json(body)
             .send()
             .await?;
-        let payload = self.parse_response(response).await?;
+        let payload = self.process_response(response).await?;
         Ok(payload)
     }
 
