@@ -1,5 +1,6 @@
-use crate::client::Client;
 use serde::{Deserialize, Serialize};
+
+use crate::client::Client;
 
 #[derive(Debug)]
 pub struct OtherSvc<'c> {
@@ -79,9 +80,11 @@ impl<'c> OtherSvc<'c> {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
     use std::fs;
+
     use wiremock::{matchers, Mock, MockServer, ResponseTemplate};
+
+    use super::*;
 
     #[tokio::test]
     async fn get_currencies_success() {

@@ -1,6 +1,7 @@
-use crate::client::Client;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+
+use crate::client::Client;
 
 #[derive(Debug)]
 pub struct NotificationsSvc<'c> {
@@ -70,9 +71,9 @@ impl<'c> NotificationsSvc<'c> {
 
 #[cfg(test)]
 mod tests {
+    use wiremock::{matchers::any, Mock, MockServer, ResponseTemplate};
+
     use super::*;
-    use wiremock::matchers::any;
-    use wiremock::{Mock, MockServer, ResponseTemplate};
 
     #[tokio::test]
     async fn get_notifications_works() {

@@ -1,8 +1,9 @@
-use crate::{errors, notifications::NotificationsSvc, other::OtherSvc, users::UsersSvc};
 use anyhow::bail;
 use reqwest::{header, StatusCode};
 use secrecy::{ExposeSecret, Secret};
 use serde::{de::DeserializeOwned, Serialize};
+
+use crate::{errors, notifications::NotificationsSvc, other::OtherSvc, users::UsersSvc};
 
 #[derive(Debug, Clone)]
 pub struct Client {

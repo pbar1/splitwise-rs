@@ -1,5 +1,6 @@
-use crate::client::Client;
 use serde::{Deserialize, Serialize};
+
+use crate::client::Client;
 
 #[derive(Debug)]
 pub struct UsersSvc<'c> {
