@@ -18,8 +18,7 @@ impl<'c> NotificationsSvc<'c> {
         &self,
         request: GetNotificationsRequest,
     ) -> Result<Vec<Notification>, anyhow::Error> {
-        let mut url = self.client.base_url.clone();
-        url.set_path("get_notifications");
+        let mut url = self.client.base_url.join("get_notifications")?;
         let query = serde_qs::to_string(&request)?;
         url.set_query(Some(&query));
         let response: NotificationsWrapper = self.client.get(url).await?;
@@ -28,27 +27,18 @@ impl<'c> NotificationsSvc<'c> {
 }
 
 #[cfg(test)]
-mod tests {
-    use httpmock::prelude::*;
+mod integration_tests {
+    use test_log::test;
 
     use super::*;
 
-    #[tokio::test]
-    async fn get_notifications_success() {
-        let server = MockServer::start();
-        let mock = server.mock(|when, then| {
-            when.method(GET).path("/get_notifications");
-            then.status(200)
-                .header("Content-Type", "application/json")
-                .body_from_file("test/notifications/get_notifications.GET.200.success.json");
-        });
+    #[test(tokio::test)]
+    async fn get_notifications_works() {
+        let request = GetNotificationsRequest::default();
         Client::default()
-            .with_base_url(server.base_url().as_str())
-            .unwrap()
             .notifications()
-            .get_notifications(GetNotificationsRequest::default())
+            .get_notifications(request)
             .await
             .unwrap();
-        mock.assert();
     }
 }

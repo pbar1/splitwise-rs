@@ -4,13 +4,21 @@ Splitwise SDK for Rust
 
 ## Progress
 
-| API            | Implemented | Unit Tested |
-|----------------|-------------|-------------|
-| Authentication | 1/2         | 0/2         |
-| Users          | 3/3         | 3/3         |
-| Groups         | 0/7         | 0/7         |
-| Friends        | 0/5         | 0/5         |
-| Expenses       | 2.5/6       | 2.5/6       |
-| Comments       | 0/3         | 0/3         |
-| Notifications  | 1/1         | 1/1         |
-| Other          | 3/3         | 3/3         |
+| API            | Implementations | Integration Tests |
+|----------------|-----------------|-------------------|
+| Authentication | 1/2             | 1/2               |
+| Users          | Complete        | Complete          |
+| Groups         | 0/7             | 0/7               |
+| Friends        | 0/5             | 0/5               |
+| Expenses       | Complete        | Complete          |
+| Comments       | 0/3             | 0/3               |
+| Notifications  | Complete        | Complete          |
+| Other          | Complete        | Complete          |
+
+## TODO
+
+- Cargo features for sync and async
+- Make HTTP client generic and pluggable
+- Reorganize into model and impl source directories
+- Document everything
+- Take into account Splitwise API versioning

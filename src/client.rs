@@ -21,7 +21,7 @@ impl Default for Client {
     /// Splitwise API URL, and an API key sourced from the environment variable `SPLITWISE_API_KEY`.
     fn default() -> Self {
         let http_client = reqwest::Client::default();
-        let base_url = Url::parse("https://secure.splitwise.com/api/v3.0").unwrap();
+        let base_url = Url::parse("https://secure.splitwise.com/api/v3.0/").unwrap();
         let api_key: Secret<String> = std::env::var("SPLITWISE_API_KEY")
             .unwrap_or_else(|_| String::from(""))
             .into();
@@ -43,6 +43,7 @@ impl Client {
         }
     }
 
+    // TODO: Consider ensuring trailing slash in base url
     /// Builds a new Splitwise client from the current one, with the given API base URL as an override.
     pub fn with_base_url(self, base_url: &str) -> Result<Self, anyhow::Error> {
         let base_url = Url::parse(base_url)?;
@@ -120,6 +121,24 @@ impl Client {
                 format!("Bearer {}", &self.api_key.expose_secret()),
             )
             .json(body)
+            .send()
+            .await?;
+        let payload = self.process_response(response).await?;
+        Ok(payload)
+    }
+
+    /// Perform an HTTP POST wrapped with auth, with no request body.
+    pub(crate) async fn post_no_body<T>(&self, url: Url) -> Result<T, anyhow::Error>
+    where
+        T: DeserializeOwned,
+    {
+        let response = self
+            .http_client
+            .post(url)
+            .header(
+                header::AUTHORIZATION,
+                format!("Bearer {}", &self.api_key.expose_secret()),
+            )
             .send()
             .await?;
         let payload = self.process_response(response).await?;
