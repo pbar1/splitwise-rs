@@ -40,3 +40,9 @@ pub struct Image {
     pub xlarge: Option<String>,
     pub xxlarge: Option<String>,
 }
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct Balance {
+    pub currency_code: Option<String>,
+    pub amount: Option<String>,
+}

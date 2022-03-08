@@ -8,7 +8,7 @@ Splitwise SDK for Rust
 |----------------|-----------------|-------------------|
 | Authentication | 1/2             | 1/2               |
 | Users          | Complete        | Complete          |
-| Groups         | 0/7             | 0/7               |
+| Groups         | 2/7             | 2/7               |
 | Friends        | 0/5             | 0/5               |
 | Expenses       | Complete        | Complete          |
 | Comments       | 0/3             | 0/3               |

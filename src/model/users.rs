@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::model::Image;
+use crate::model::{Balance, Image};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct UserWrapper {
@@ -21,6 +21,7 @@ pub struct User {
     pub notifications: Option<UserNotifications>,
     pub default_currency: Option<String>,
     pub locale: Option<String>,
+    pub balance: Option<Vec<Balance>>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]

@@ -1,16 +1,18 @@
 use std::collections::HashMap;
 
 use anyhow::bail;
-use expenses::ExpensesSvc;
-use notifications::NotificationsSvc;
-use other::OtherSvc;
 use reqwest::{header, StatusCode};
 use secrecy::{ExposeSecret, Secret};
 use serde::{de::DeserializeOwned, Serialize};
 use url::Url;
-use users::UsersSvc;
 
-use crate::model;
+use crate::{
+    client::{
+        expenses::ExpensesSvc, groups::GroupsSvc, notifications::NotificationsSvc, other::OtherSvc,
+        users::UsersSvc,
+    },
+    model::{ErrorForbiddenOrNotFound, ErrorUnauthorized},
+};
 
 pub mod authentication;
 pub mod comments;
@@ -89,11 +91,11 @@ impl Client {
                 Ok(decoded)
             }
             StatusCode::UNAUTHORIZED => {
-                let decoded = response.json::<model::ErrorUnauthorized>().await?;
+                let decoded = response.json::<ErrorUnauthorized>().await?;
                 bail!(decoded.error)
             }
             StatusCode::FORBIDDEN | StatusCode::NOT_FOUND => {
-                let decoded = response.json::<model::ErrorForbiddenOrNotFound>().await?;
+                let decoded = response.json::<ErrorForbiddenOrNotFound>().await?;
                 bail!(decoded.errors.base.join("; "))
             }
             _ => bail!("unexpected HTTP status code: {}", response.status()),
@@ -160,6 +162,11 @@ impl Client {
     /// Users API group.
     pub fn users(&self) -> UsersSvc {
         UsersSvc::new(self)
+    }
+
+    /// Groups API group.
+    pub fn groups(&self) -> GroupsSvc {
+        GroupsSvc::new(self)
     }
 
     /// Expenses API group.
