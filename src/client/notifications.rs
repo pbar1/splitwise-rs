@@ -1,6 +1,6 @@
 use crate::{
     client::Client,
-    model::{GetNotificationsRequest, Notification, NotificationsWrapper},
+    model::notifications::{GetNotificationsRequest, Notification, NotificationsWrapper},
 };
 
 #[derive(Debug)]

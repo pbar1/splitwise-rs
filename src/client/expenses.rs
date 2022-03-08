@@ -1,12 +1,13 @@
 use anyhow::bail;
 
 use crate::{
-    client::Client,
-    errors,
-    errors::join_errors,
+    client::{join_errors, Client},
     model::{
-        CreateExpenseRequest, Expense, ExpenseWrapper, ExpensesWrapper, GetExpensesRequest,
-        UpdateExpenseRequest,
+        expenses::{
+            CreateExpenseRequest, Expense, ExpenseWrapper, ExpensesWrapper, GetExpensesRequest,
+            UpdateExpenseRequest,
+        },
+        Success,
     },
 };
 
@@ -89,7 +90,7 @@ impl<'c> ExpensesSvc<'c> {
             .base_url
             .join(&format!("delete_expense/{}", id))?;
 
-        let response: errors::Success = self.client.post_no_body(url).await?;
+        let response: Success = self.client.post_no_body(url).await?;
 
         if response.success {
             return Ok(());
@@ -110,7 +111,7 @@ impl<'c> ExpensesSvc<'c> {
             .base_url
             .join(&format!("undelete_expense/{}", id))?;
 
-        let response: errors::Success = self.client.post_no_body(url).await?;
+        let response: Success = self.client.post_no_body(url).await?;
 
         if response.success {
             return Ok(());
@@ -133,7 +134,7 @@ mod integration_tests {
     use test_log::test;
 
     use super::*;
-    use crate::model::UserByShares;
+    use crate::model::expenses::UserByShares;
 
     #[test(tokio::test)]
     async fn create_update_get_delete_undelete_list_expense_works() {

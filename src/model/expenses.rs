@@ -2,81 +2,16 @@ use std::collections::HashMap;
 
 use chrono::Utc;
 use serde::{Deserialize, Serialize, Serializer};
-use serde_repr::{Deserialize_repr, Serialize_repr};
 
-// -----------------------------------------------------------------------------
-// Users
-// -----------------------------------------------------------------------------
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub(crate) struct UserWrapper {
-    pub user: User,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct User {
-    pub id: Option<i64>,
-    pub first_name: Option<String>,
-    pub last_name: Option<String>,
-    pub email: Option<String>,
-    pub registration_status: Option<String>,
-    pub picture: Option<Image>,
-    pub custom_picture: Option<bool>,
-    pub notifications_read: Option<String>,
-    pub notifications_count: Option<i64>,
-    pub notifications: Option<UserNotifications>,
-    pub default_currency: Option<String>,
-    pub locale: Option<String>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Image {
-    pub small: Option<String>,
-    pub medium: Option<String>,
-    pub large: Option<String>,
-    pub xlarge: Option<String>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct UserNotifications {
-    pub added_as_friend: Option<bool>,
-    pub expense_added: Option<bool>,
-    pub expense_updated: Option<bool>,
-    pub bills: Option<bool>,
-    pub payments: Option<bool>,
-    pub monthly_summary: Option<bool>,
-    pub announcements: Option<bool>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct UpdateUserRequest {
-    pub first_name: Option<String>,
-    pub last_name: Option<String>,
-    pub email: Option<String>,
-    pub password: Option<String>,
-    pub locale: Option<String>,
-    pub default_currency: Option<String>,
-}
-
-// -----------------------------------------------------------------------------
-// Groups
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Friends
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Expenses
-// -----------------------------------------------------------------------------
+use crate::model::{other::Category, users::User};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub(crate) struct ExpenseWrapper {
+pub struct ExpenseWrapper {
     pub expense: Expense,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub(crate) struct ExpensesWrapper {
+pub struct ExpensesWrapper {
     pub expenses: Vec<Expense>,
     pub errors: Option<HashMap<String, Vec<String>>>,
 }
@@ -116,8 +51,6 @@ pub struct Expense {
     pub users: Option<Vec<ExpenseUser>>,
     pub comments: Option<Vec<Comment>>,
 }
-
-pub enum RepeatInterval {}
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Repayment {
@@ -216,6 +149,20 @@ pub struct UpdateExpenseRequest {
     pub users: Option<Vec<UserByShares>>,
 }
 
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct UserByShares {
+    pub user_id: Option<i64>,
+    pub first_name: Option<String>,
+    pub last_name: Option<String>,
+    pub email: Option<String>,
+
+    /// Decimal amount as a string with 2 decimal places. The amount this user paid for the expense
+    pub paid_share: Option<String>,
+
+    /// Decimal amount as a string with 2 decimal places. The amount this user owes for the expense
+    pub owed_share: Option<String>,
+}
+
 impl Default for CreateExpenseRequest {
     fn default() -> Self {
         Self {
@@ -263,124 +210,4 @@ fn users_by_shares_ser<S: Serializer>(
     }
 
     map.serialize(serializer)
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct UserByShares {
-    pub user_id: Option<i64>,
-    pub first_name: Option<String>,
-    pub last_name: Option<String>,
-    pub email: Option<String>,
-
-    /// Decimal amount as a string with 2 decimal places. The amount this user paid for the expense
-    pub paid_share: Option<String>,
-
-    /// Decimal amount as a string with 2 decimal places. The amount this user owes for the expense
-    pub owed_share: Option<String>,
-}
-
-// -----------------------------------------------------------------------------
-// Comments
-// -----------------------------------------------------------------------------
-
-// -----------------------------------------------------------------------------
-// Notifications
-// -----------------------------------------------------------------------------
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct GetNotificationsRequest {
-    pub updated_after: Option<chrono::DateTime<Utc>>,
-    pub limit: Option<i64>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct NotificationsWrapper {
-    pub notifications: Vec<Notification>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Notification {
-    pub id: i64,
-    #[serde(rename = "type")]
-    pub notification_type: NotificationType,
-    pub created_at: String, // TODO: chrono
-    pub created_by: i64,
-    pub source: NotificationSource,
-    pub image_url: String,
-    pub image_shape: String,
-    pub content: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct NotificationSource {
-    #[serde(rename = "type")]
-    pub source_type: String,
-    pub id: i64,
-    pub url: Option<String>,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize_repr, Deserialize_repr)]
-#[repr(u8)]
-pub enum NotificationType {
-    ExpenseAdded,
-    ExpenseUpdated,
-    ExpenseDeleted,
-    CommentAdded,
-    AddedToGroup,
-    RemovedFromGroup,
-    GroupDeleted,
-    GroupSettingsChanged,
-    AddedAsFriend,
-    RemovedAsFriend,
-    News,
-    DebtSimplification,
-    GroupUndeleted,
-    ExpenseUndeleted,
-    GroupCurrencyConversion,
-    FriendCurrencyConversion,
-}
-
-// -----------------------------------------------------------------------------
-// Other
-// -----------------------------------------------------------------------------
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub(crate) struct CurrenciesWrapper {
-    pub currencies: Vec<Currency>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Currency {
-    pub currency_code: String,
-    pub unit: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub(crate) struct CategoriesWrapper {
-    pub categories: Vec<Category>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Category {
-    pub id: i64,
-    pub name: String,
-    pub icon: Option<String>,
-    pub icon_types: Option<HashMap<String, Image>>,
-    pub subcategories: Option<Vec<Category>>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ParseSentenceRequest {
-    pub input: String,
-    pub friend_id: Option<i64>,
-    pub group_id: Option<i64>,
-    pub autosave: bool,
-}
-
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct ParseSentenceResponse {
-    pub expense: Option<Expense>,
-    pub valid: Option<bool>,
-    pub confidence: Option<f64>,
-    pub error: Option<String>,
 }

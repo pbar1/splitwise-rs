@@ -1,12 +1,14 @@
 use serde::{Deserialize, Serialize};
 
+use crate::model::Image;
+
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct GroupsResponse {
+pub(crate) struct GroupsResponse {
     pub groups: Vec<Group>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct GroupResponse {
+pub(crate) struct GroupResponse {
     pub group: Group,
 }
 
@@ -20,9 +22,9 @@ pub struct Group {
     pub members: Vec<Member>,
     pub original_debts: Vec<OriginalDebt>,
     pub simplified_debts: Vec<SimplifiedDebt>,
-    pub avatar: Avatar,
+    pub avatar: Image,
     pub custom_avatar: bool,
-    pub cover_photo: CoverPhoto,
+    pub cover_photo: Image,
     pub invite_link: String,
 }
 
@@ -33,15 +35,8 @@ pub struct Member {
     pub last_name: String,
     pub email: String,
     pub registration_status: String,
-    pub picture: Picture,
+    pub picture: Image,
     pub balance: Vec<Balance>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Picture {
-    pub small: String,
-    pub medium: String,
-    pub large: String,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -64,22 +59,6 @@ pub struct SimplifiedDebt {
     pub to: i64,
     pub amount: String,
     pub currency_code: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Avatar {
-    pub original: Option<String>,
-    pub xxlarge: String,
-    pub xlarge: String,
-    pub large: String,
-    pub medium: String,
-    pub small: String,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CoverPhoto {
-    pub xxlarge: String,
-    pub xlarge: String,
 }
 
 // FIXME: Properly serialize `users` field by index

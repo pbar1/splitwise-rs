@@ -1,13 +1,25 @@
+use std::collections::HashMap;
+
 use anyhow::bail;
+use expenses::ExpensesSvc;
+use notifications::NotificationsSvc;
+use other::OtherSvc;
 use reqwest::{header, StatusCode};
 use secrecy::{ExposeSecret, Secret};
 use serde::{de::DeserializeOwned, Serialize};
 use url::Url;
+use users::UsersSvc;
 
-use crate::{
-    errors, expenses::ExpensesSvc, notifications::NotificationsSvc, other::OtherSvc,
-    users::UsersSvc,
-};
+use crate::model;
+
+pub mod authentication;
+pub mod comments;
+pub mod expenses;
+pub mod friends;
+pub mod groups;
+pub mod notifications;
+pub mod other;
+pub mod users;
 
 #[derive(Debug, Clone)]
 pub struct Client {
@@ -77,11 +89,11 @@ impl Client {
                 Ok(decoded)
             }
             StatusCode::UNAUTHORIZED => {
-                let decoded = response.json::<errors::ErrorUnauthorized>().await?;
+                let decoded = response.json::<model::ErrorUnauthorized>().await?;
                 bail!(decoded.error)
             }
             StatusCode::FORBIDDEN | StatusCode::NOT_FOUND => {
-                let decoded = response.json::<errors::ErrorForbiddenOrNotFound>().await?;
+                let decoded = response.json::<model::ErrorForbiddenOrNotFound>().await?;
                 bail!(decoded.errors.base.join("; "))
             }
             _ => bail!("unexpected HTTP status code: {}", response.status()),
@@ -164,4 +176,12 @@ impl Client {
     pub fn other(&self) -> OtherSvc {
         OtherSvc::new(self)
     }
+}
+
+pub(crate) fn join_errors(errors: &HashMap<String, Vec<String>>) -> String {
+    let mut error_text = String::from("");
+    for (k, v) in errors {
+        error_text.push_str(&format!("{}: [{}];", k, v.join("; ")));
+    }
+    error_text
 }

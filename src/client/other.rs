@@ -1,6 +1,6 @@
 use crate::{
     client::Client,
-    model::{
+    model::other::{
         CategoriesWrapper, Category, CurrenciesWrapper, Currency, ParseSentenceRequest,
         ParseSentenceResponse,
     },

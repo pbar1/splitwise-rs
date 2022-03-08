@@ -1,6 +1,6 @@
 use crate::{
     client::Client,
-    model::{UpdateUserRequest, User, UserWrapper},
+    model::users::{UpdateUserRequest, User, UserWrapper},
 };
 
 #[derive(Debug)]
