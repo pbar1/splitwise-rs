@@ -19,6 +19,5 @@ Splitwise SDK for Rust
 
 - Cargo features for sync and async
 - Make HTTP client generic and pluggable
-- Reorganize into model and impl source directories
 - Document everything
 - Take into account Splitwise API versioning
