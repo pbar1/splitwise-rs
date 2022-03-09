@@ -8,10 +8,10 @@ Splitwise SDK for Rust
 |----------------|-----------------|-------------------|
 | Authentication | 1/2             | 1/2               |
 | Users          | Complete        | Complete          |
-| Groups         | Complete        | Complete*         |
-| Friends        | 0/5             | 0/5               |
+| Groups         | Complete        | Complete          |
+| Friends        | Complete        | 2/5               |
 | Expenses       | Complete        | Complete          |
-| Comments       | 0/3             | 0/3               |
+| Comments       | Complete        | Complete          |
 | Notifications  | Complete        | Complete          |
 | Other          | Complete        | Complete          |
 
@@ -20,4 +20,7 @@ Splitwise SDK for Rust
 - Cargo features for sync and async
 - Make HTTP client generic and pluggable
 - Document everything
-- Take into account Splitwise API versioning
+- Handle Splitwise API versioning
+- All of the `.error` and `.errors` properties should be handled more robustly
+- Disambiguate API names - ie, prefer `list_users` over `get_users`, as `get_user` also exists
+- Cut down on some superfluous `*Request` and `*Response` types in favor of function params

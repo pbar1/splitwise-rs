@@ -108,26 +108,28 @@ mod integration_tests {
         client.groups().delete_group(id).await.unwrap();
     }
 
-    // TODO: Re-enable this test with a user that the test user is friends with
-    // #[test(tokio::test)]
-    // async fn add_remove_user_from_group_works() {
-    //     let client = Client::default();
-    //     let group_id = 30331347;
-    //     let user_id = 9239275;
-    //
-    //     let _add_resp = client
-    //         .groups()
-    //         .add_user_to_group(AddUserToGroupRequest {
-    //             group_id,
-    //             user_id: Some(user_id),
-    //             ..AddUserToGroupRequest::default()
-    //         })
-    //         .await
-    //         .unwrap();
-    //     let _remove_resp = client
-    //         .groups()
-    //         .remove_user_from_group(RemoveUserFromGroupRequest { group_id, user_id })
-    //         .await
-    //         .unwrap();
-    // }
+    // TODO: Use a user that the test user is friends with, or this will continue to fail
+    #[test(tokio::test)]
+    async fn add_remove_user_from_group_works() {
+        let client = Client::default();
+        let group_id = 30331347;
+        let user_id = 9239275;
+
+        let added = client
+            .groups()
+            .add_user_to_group(AddUserToGroupRequest {
+                group_id,
+                user_id: Some(user_id),
+                ..AddUserToGroupRequest::default()
+            })
+            .await
+            .unwrap();
+        let removed = client
+            .groups()
+            .remove_user_from_group(RemoveUserFromGroupRequest { group_id, user_id })
+            .await
+            .unwrap();
+
+        println!("{:?} and {:?}", added, removed)
+    }
 }

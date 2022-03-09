@@ -92,10 +92,11 @@ pub struct RemoveUserFromGroupRequest {
     pub user_id: i64,
 }
 
+// TODO: "errors" is [] when none, {} when some - this is endemic to all of Splitwise
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RemoveUserFromGroupResponse {
     pub success: bool,
-    pub errors: Option<HashMap<String, Vec<String>>>,
+    pub errors: Option<Vec<String>>,
 }
 
 fn serialize_option_vec_create_group_user<S: Serializer>(

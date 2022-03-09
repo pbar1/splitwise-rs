@@ -8,8 +8,8 @@ use url::Url;
 
 use crate::{
     client::{
-        expenses::ExpensesSvc, groups::GroupsSvc, notifications::NotificationsSvc, other::OtherSvc,
-        users::UsersSvc,
+        comments::CommentsSvc, expenses::ExpensesSvc, friends::FriendsSvc, groups::GroupsSvc,
+        notifications::NotificationsSvc, other::OtherSvc, users::UsersSvc,
     },
     model::{ErrorForbiddenOrNotFound, ErrorUnauthorized},
 };
@@ -169,9 +169,19 @@ impl Client {
         GroupsSvc::new(self)
     }
 
+    /// Friends API group.
+    pub fn friends(&self) -> FriendsSvc {
+        FriendsSvc::new(self)
+    }
+
     /// Expenses API group.
     pub fn expenses(&self) -> ExpensesSvc {
         ExpensesSvc::new(self)
+    }
+
+    /// Comments API group.
+    pub fn comments(&self) -> CommentsSvc {
+        CommentsSvc::new(self)
     }
 
     /// Notifications API group.

@@ -3,7 +3,7 @@ use std::collections::HashMap;
 use chrono::Utc;
 use serde::{Deserialize, Serialize, Serializer};
 
-use crate::model::{other::Category, users::User};
+use crate::model::{comments::Comment, other::Category, users::User};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ExpenseWrapper {
@@ -73,19 +73,6 @@ pub struct ExpenseUser {
     pub paid_share: Option<String>,
     pub owed_share: Option<String>,
     pub net_balance: Option<String>,
-}
-
-// TODO: This may move into the "comments" section
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Comment {
-    pub id: i64,
-    pub content: String,
-    pub comment_type: String,
-    pub relation_type: String,
-    pub relation_id: i64,
-    pub created_at: chrono::DateTime<Utc>,
-    pub deleted_at: Option<chrono::DateTime<Utc>>,
-    pub user: Option<User>, // TODO: Guessing this is the main "User" type
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
