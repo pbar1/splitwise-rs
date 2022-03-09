@@ -113,7 +113,7 @@ pub struct CreateExpenseRequest {
     pub split_equally: bool,
 
     #[serde(flatten)]
-    #[serde(serialize_with = "users_by_shares_ser")]
+    #[serde(serialize_with = "serialize_option_vec_user_by_shares")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub users: Option<Vec<UserByShares>>,
 }
@@ -144,7 +144,7 @@ pub struct UpdateExpenseRequest {
     pub group_id: i64,
 
     #[serde(flatten)]
-    #[serde(serialize_with = "users_by_shares_ser")]
+    #[serde(serialize_with = "serialize_option_vec_user_by_shares")]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub users: Option<Vec<UserByShares>>,
 }
@@ -180,7 +180,7 @@ impl Default for CreateExpenseRequest {
     }
 }
 
-fn users_by_shares_ser<S: Serializer>(
+fn serialize_option_vec_user_by_shares<S: Serializer>(
     vec: &Option<Vec<UserByShares>>,
     serializer: S,
 ) -> Result<S::Ok, S::Error> {

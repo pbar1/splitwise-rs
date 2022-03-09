@@ -4,3 +4,5 @@ Cargo.lock
 .env
 
 schemas/
+
+*.csv

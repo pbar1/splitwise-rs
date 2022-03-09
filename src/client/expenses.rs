@@ -95,14 +95,12 @@ impl<'c> ExpensesSvc<'c> {
         if response.success {
             return Ok(());
         }
-
         if let Some(e) = response.errors {
             if !e.is_empty() {
                 bail!(join_errors(&e))
             }
         }
-
-        bail!("unknown error deleting expense")
+        bail!("unknown error deleting expense: {}", id)
     }
 
     pub async fn undelete_expense(&self, id: i64) -> Result<(), anyhow::Error> {
