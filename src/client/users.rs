@@ -3,31 +3,33 @@ use crate::{
     model::users::{UpdateUserRequest, User, UserWrapper},
 };
 
+/// [Resources to access and modify user information.](https://dev.splitwise.com/#tag/users)
 #[derive(Debug)]
 pub struct UsersSvc<'c> {
     client: &'c Client,
 }
 
 impl<'c> UsersSvc<'c> {
+    /// Creates an instance of `UsersSvc`.
     pub fn new(client: &'c Client) -> Self {
         Self { client }
     }
 
-    /// [Get information about the current user](https://dev.splitwise.com/#tag/users/paths/~1get_current_user/get)
+    /// [Get information about the current user.](https://dev.splitwise.com/#tag/users/paths/~1get_current_user/get)
     pub async fn get_current_user(&self) -> Result<User, anyhow::Error> {
         let url = self.client.base_url.join("get_current_user")?;
         let response: UserWrapper = self.client.get(url).await?;
         Ok(response.user)
     }
 
-    /// [Get information about another user](https://dev.splitwise.com/#tag/users/paths/~1get_user~1{id}/get)
+    /// [Get information about another user.](https://dev.splitwise.com/#tag/users/paths/~1get_user~1{id}/get)
     pub async fn get_user(&self, id: i64) -> Result<User, anyhow::Error> {
         let url = self.client.base_url.join(&format!("get_user/{}", id))?;
         let response: UserWrapper = self.client.get(url).await?;
         Ok(response.user)
     }
 
-    /// [Update a user](https://dev.splitwise.com/#tag/users/paths/~1update_user~1{id}/post)
+    /// [Update a user.](https://dev.splitwise.com/#tag/users/paths/~1update_user~1{id}/post)
     pub async fn update_user(
         &self,
         id: i64,
@@ -41,32 +43,50 @@ impl<'c> UsersSvc<'c> {
 
 #[cfg(test)]
 mod integration_tests {
+    use log::debug;
     use test_log::test;
 
     use super::*;
 
     #[test(tokio::test)]
-    async fn get_current_user_works() {
-        Client::default().users().get_current_user().await.unwrap();
-    }
-
-    #[test(tokio::test)]
-    async fn get_user_works() {
-        Client::default().users().get_user(47829677).await.unwrap();
-    }
-
-    #[test(tokio::test)]
-    async fn update_user_works() {
+    async fn get_current_get_update_user_works() {
         let client = Client::default();
-        let request = UpdateUserRequest {
-            default_currency: Some("BTC".to_string()),
-            ..UpdateUserRequest::default()
-        };
-        client.users().update_user(47829677, request).await.unwrap();
-        let request = UpdateUserRequest {
-            default_currency: Some("USD".to_string()),
-            ..UpdateUserRequest::default()
-        };
-        client.users().update_user(47829677, request).await.unwrap();
+
+        let current = client.users().get_current_user().await.unwrap();
+        debug!("get_current_user: {:#?}", current);
+
+        let id = current.id.unwrap();
+
+        let get = client.users().get_user(id).await.unwrap();
+        debug!("get_user: {:#?}", get);
+        assert_eq!(id, get.id.unwrap());
+
+        let btc = client
+            .users()
+            .update_user(
+                id,
+                UpdateUserRequest {
+                    default_currency: Some("BTC".to_string()),
+                    ..UpdateUserRequest::default()
+                },
+            )
+            .await
+            .unwrap();
+        debug!("update_user: {:#?}", btc);
+        assert_eq!("BTC".to_string(), btc.default_currency.unwrap());
+
+        let btc = client
+            .users()
+            .update_user(
+                id,
+                UpdateUserRequest {
+                    default_currency: Some("USD".to_string()),
+                    ..UpdateUserRequest::default()
+                },
+            )
+            .await
+            .unwrap();
+        debug!("update_user: {:#?}", btc);
+        assert_eq!("USD".to_string(), btc.default_currency.unwrap());
     }
 }
