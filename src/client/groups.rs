@@ -17,7 +17,7 @@ impl<'c> GroupsSvc<'c> {
         Self { client }
     }
 
-    pub async fn get_groups(&self) -> Result<Vec<Group>, anyhow::Error> {
+    pub async fn list_groups(&self) -> Result<Vec<Group>, anyhow::Error> {
         let url = self.client.base_url.join("get_groups")?;
         let response: GroupsWrapper = self.client.get(url).await?;
         Ok(response.groups)
@@ -71,48 +71,94 @@ impl<'c> GroupsSvc<'c> {
 
 #[cfg(test)]
 mod integration_tests {
+    use log::debug;
     use test_log::test;
 
     use super::*;
+    use crate::model::users::User;
 
     #[test(tokio::test)]
-    async fn get_groups_works() {
-        Client::default().groups().get_groups().await.unwrap();
-    }
+    async fn list_get_group_works() {
+        let client = Client::default();
 
-    #[test(tokio::test)]
-    async fn get_group_works() {
-        Client::default()
-            .groups()
-            .get_group(30331347)
-            .await
-            .unwrap();
+        let list = client.groups().list_groups().await.unwrap();
+        debug!("list: {:?}", list);
+        let id = list.first().unwrap().id.unwrap();
+
+        let get = client.groups().get_group(id).await.unwrap();
+        debug!("get: {:?}", get);
+        assert_eq!(id, get.id.unwrap());
     }
 
     #[test(tokio::test)]
     async fn create_delete_restore_group_works() {
         let client = Client::default();
-        let group = client
+
+        let name = "fake-group-1".to_string();
+
+        let create = client
             .groups()
             .create_group(CreateGroupRequest {
-                name: "fake-group-1".to_string(),
+                name: name.clone(),
                 group_type: Some("apartment".to_string()),
                 simplify_by_default: Some(true),
                 users: None,
             })
             .await
             .unwrap();
-        let id = group.id.unwrap();
-        client.groups().delete_group(id).await.unwrap();
-        client.groups().restore_group(id).await.unwrap();
-        client.groups().delete_group(id).await.unwrap();
+        debug!("create: {:?}", create);
+        assert_eq!(create.name.unwrap(), name);
+
+        let id = create.id.unwrap();
+
+        let delete = client.groups().delete_group(id).await.unwrap();
+        debug!("delete: {:?}", delete);
+        assert!(delete.success);
+
+        let restore = client.groups().restore_group(id).await.unwrap();
+        debug!("restore: {:?}", restore);
+        assert!(restore.success);
+
+        let delete = client.groups().delete_group(id).await.unwrap();
+        debug!("delete: {:?}", delete);
+        assert!(delete.success);
     }
 
     #[test(tokio::test)]
     async fn add_remove_user_from_group_works() {
         let client = Client::default();
-        let group_id = 30331347;
-        let user_id = 9239275;
+
+        let list = client.groups().list_groups().await.unwrap();
+        debug!("list: {:#?}", list);
+
+        // Find a group that is not "Non-group expenses"
+        let mut group: Option<Group> = None;
+        for g in list {
+            if g.id.unwrap() != 0 {
+                group = Some(g);
+            }
+        }
+        debug!("group: {:#?}", group);
+        let group_id = group.clone().unwrap().id.unwrap();
+
+        // Find a user that is not ourself
+        let own_user_id = client.users().get_current_user().await.unwrap().id.unwrap();
+        let mut user: Option<User> = None;
+        for u in group.unwrap().members.unwrap() {
+            if u.id.unwrap() != own_user_id {
+                user = Some(u);
+            }
+        }
+        debug!("user: {:#?}", user);
+        let user_id = user.unwrap().id.unwrap();
+
+        let removed = client
+            .groups()
+            .remove_user_from_group(RemoveUserFromGroupRequest { group_id, user_id })
+            .await
+            .unwrap();
+        debug!("removed: {:?}", removed);
+        assert!(removed.success);
 
         let added = client
             .groups()
@@ -123,12 +169,7 @@ mod integration_tests {
             })
             .await
             .unwrap();
-        let removed = client
-            .groups()
-            .remove_user_from_group(RemoveUserFromGroupRequest { group_id, user_id })
-            .await
-            .unwrap();
-
-        println!("{:?} and {:?}", added, removed)
+        debug!("added: {:?}", added);
+        assert!(added.success);
     }
 }

@@ -1,10 +1,8 @@
-use std::{fmt::format, ops::Add};
-
-use anyhow::Error;
 use chrono::{NaiveDate, TimeZone, Utc};
 use serde::{de::Deserializer, Deserialize};
-use splitwise::model::expenses::{CreateExpenseRequest, Expense, GetExpensesRequest};
+use splitwise::model::expenses::{CreateExpenseRequest, GetExpensesRequest};
 
+#[allow(dead_code)]
 #[derive(Debug, Deserialize)]
 struct ChaseTransaction {
     #[serde(rename = "Transaction Date")]

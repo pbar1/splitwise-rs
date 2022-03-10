@@ -27,7 +27,7 @@ pub mod users;
 pub struct Client {
     http_client: reqwest::Client,
     pub(crate) base_url: Url,
-    api_key: Secret<String>,
+    authorization: Secret<String>,
 }
 
 impl Default for Client {
@@ -36,13 +36,13 @@ impl Default for Client {
     fn default() -> Self {
         let http_client = reqwest::Client::default();
         let base_url = Url::parse("https://secure.splitwise.com/api/v3.0/").unwrap();
-        let api_key: Secret<String> = std::env::var("SPLITWISE_API_KEY")
-            .unwrap_or_else(|_| String::from(""))
-            .into();
+        let api_key: String =
+            std::env::var("SPLITWISE_API_KEY").unwrap_or_else(|_| String::from(""));
+        let authorization = format!("Bearer {}", api_key).into();
         Self {
             http_client,
             base_url,
-            api_key,
+            authorization,
         }
     }
 }
@@ -53,29 +53,36 @@ impl Client {
         Self {
             http_client,
             base_url: self.base_url,
-            api_key: self.api_key,
+            authorization: self.authorization,
         }
     }
 
-    // TODO: Consider ensuring trailing slash in base url
     /// Builds a new Splitwise client from the current one, with the given API base URL as an override.
     pub fn with_base_url(self, base_url: &str) -> Result<Self, anyhow::Error> {
-        let base_url = Url::parse(base_url)?;
+        let mut ensured_base_url = base_url.to_string();
+        if !ensured_base_url.ends_with('/') {
+            ensured_base_url.push('/');
+        }
+        let base_url = Url::parse(&ensured_base_url)?;
         Ok(Self {
             http_client: self.http_client,
             base_url,
-            api_key: self.api_key,
+            authorization: self.authorization,
         })
     }
 
     /// Builds a new Splitwise client from the current one, with the given API key as an override.
     pub fn with_api_key(self, api_key: Secret<String>) -> Self {
+        let authorization = format!("Bearer {}", api_key.expose_secret()).into();
         Self {
             http_client: self.http_client,
             base_url: self.base_url,
-            api_key,
+            authorization,
         }
     }
+
+    /// Builds a new Splitwise client from the current one, performing an OAuth 2.0 Authorization Code flow.
+    // pub fn with_oauth(self, )
 
     /// Decodes HTTP response into Splitwise API types or errors.
     pub(crate) async fn process_response<T>(
@@ -110,10 +117,7 @@ impl Client {
         let response = self
             .http_client
             .get(url)
-            .header(
-                header::AUTHORIZATION,
-                format!("Bearer {}", &self.api_key.expose_secret()),
-            )
+            .header(header::AUTHORIZATION, self.authorization.expose_secret())
             .send()
             .await?;
         let payload = self.process_response(response).await?;
@@ -130,10 +134,7 @@ impl Client {
         let response = self
             .http_client
             .post(url)
-            .header(
-                header::AUTHORIZATION,
-                format!("Bearer {}", &self.api_key.expose_secret()),
-            )
+            .header(header::AUTHORIZATION, self.authorization.expose_secret())
             .json(body)
             .send()
             .await?;
@@ -141,6 +142,7 @@ impl Client {
         Ok(payload)
     }
 
+    // TODO: Merge this with post
     /// Perform an HTTP POST wrapped with auth, with no request body.
     pub(crate) async fn post_form<T, S>(&self, url: Url, body: &S) -> Result<T, anyhow::Error>
     where
@@ -150,10 +152,7 @@ impl Client {
         let response = self
             .http_client
             .post(url)
-            .header(
-                header::AUTHORIZATION,
-                format!("Bearer {}", &self.api_key.expose_secret()),
-            )
+            .header(header::AUTHORIZATION, self.authorization.expose_secret())
             .form(body)
             .send()
             .await?;
@@ -161,6 +160,7 @@ impl Client {
         Ok(payload)
     }
 
+    // TODO: Merge this with post
     /// Perform an HTTP POST wrapped with auth, with no request body.
     pub(crate) async fn post_no_body<T>(&self, url: Url) -> Result<T, anyhow::Error>
     where
@@ -169,10 +169,7 @@ impl Client {
         let response = self
             .http_client
             .post(url)
-            .header(
-                header::AUTHORIZATION,
-                format!("Bearer {}", &self.api_key.expose_secret()),
-            )
+            .header(header::AUTHORIZATION, self.authorization.expose_secret())
             .send()
             .await?;
         let payload = self.process_response(response).await?;
