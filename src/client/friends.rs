@@ -1,7 +1,7 @@
 use crate::{
     client::Client,
     model::friends::{
-        AddFriendRequest, AddFriendsResponse, DeleteFriendResponse, Friend, FriendWrapper,
+        AddFriendsRequest, AddFriendsResponse, DeleteFriendResponse, Friend, FriendWrapper,
         FriendsWrapper,
     },
 };
@@ -28,18 +28,14 @@ impl<'c> FriendsSvc<'c> {
         Ok(response.friend)
     }
 
-    pub async fn add_friend(&self, request: AddFriendRequest) -> Result<Friend, anyhow::Error> {
-        let url = self.client.base_url.join("create_friend")?;
-        let response: FriendWrapper = self.client.post(url, &request).await?;
-        Ok(response.friend)
-    }
-
+    // NOTE: This endpoint behaves a bit differently than the API documents suggest.
+    // After inspection in the browser debugger, we'll be using that flow instead.
     pub async fn add_friends(
         &self,
-        request: AddFriendRequest,
+        request: AddFriendsRequest,
     ) -> Result<AddFriendsResponse, anyhow::Error> {
         let url = self.client.base_url.join("create_friends")?;
-        let response: AddFriendsResponse = self.client.post(url, &request).await?;
+        let response: AddFriendsResponse = self.client.post_form(url, &request).await?;
         Ok(response)
     }
 
@@ -55,31 +51,36 @@ impl<'c> FriendsSvc<'c> {
 
 #[cfg(test)]
 mod integration_tests {
+    use std::ops::Index;
+
+    use log::debug;
     use test_log::test;
 
     use super::*;
 
     #[test(tokio::test)]
-    async fn list_friends_works() {
-        let _response = Client::default().friends().list_friends().await.unwrap();
-    }
+    async fn list_get_delete_add_friends_works() {
+        let client = Client::default();
 
-    #[test(tokio::test)]
-    async fn get_friend_works() {
-        let _response = Client::default()
-            .friends()
-            .get_friend(9239275)
-            .await
-            .unwrap();
-    }
+        let list = Client::default().friends().list_friends().await.unwrap();
+        debug!("list_friends: {:?}", list);
+        let id = list.index(0).id.unwrap();
 
-    #[test(tokio::test)]
-    async fn add_delete_friend_works() {
-        todo!()
-    }
+        let get = client.friends().get_friend(id).await.unwrap();
+        debug!("get_friend: {:?}", get);
+        assert_eq!(id, get.id.unwrap());
 
-    #[test(tokio::test)]
-    async fn add_delete_friends_works() {
-        todo!()
+        let delete = client.friends().delete_friend(id).await.unwrap();
+        debug!("delete_friend: {:?}", delete);
+        assert!(delete.success);
+
+        let req = AddFriendsRequest {
+            emails: vec![get.email.unwrap()],
+            message: None,
+            allow_partial_success: None,
+        };
+        let add = client.friends().add_friends(req).await.unwrap();
+        debug!("add_friends: {:?}", add);
+        assert_eq!(id, add.users.unwrap().index(0).id.unwrap())
     }
 }

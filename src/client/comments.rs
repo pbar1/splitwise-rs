@@ -36,7 +36,10 @@ impl<'c> CommentsSvc<'c> {
         Ok(response.comment)
     }
 
-    // TODO: API docs are ambiguous on this one. Assuming ID is passed as a path param.
+    // NOTE: API docs are currently ambiguous on whether to pass the comment ID
+    // via a path or query parameter. However, one of the maintainers has noted
+    // that either work.
+    // See: https://github.com/pbar1/splitwise-rs/commit/0095c1d7a3a601ddc2dc76419f58649cfe13cd9a#r68338969
     pub async fn delete_comment(&self, id: i64) -> Result<Comment, anyhow::Error> {
         let url = self
             .client

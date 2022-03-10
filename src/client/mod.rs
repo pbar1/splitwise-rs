@@ -142,6 +142,26 @@ impl Client {
     }
 
     /// Perform an HTTP POST wrapped with auth, with no request body.
+    pub(crate) async fn post_form<T, S>(&self, url: Url, body: &S) -> Result<T, anyhow::Error>
+    where
+        T: DeserializeOwned,
+        S: Serialize + ?Sized,
+    {
+        let response = self
+            .http_client
+            .post(url)
+            .header(
+                header::AUTHORIZATION,
+                format!("Bearer {}", &self.api_key.expose_secret()),
+            )
+            .form(body)
+            .send()
+            .await?;
+        let payload = self.process_response(response).await?;
+        Ok(payload)
+    }
+
+    /// Perform an HTTP POST wrapped with auth, with no request body.
     pub(crate) async fn post_no_body<T>(&self, url: Url) -> Result<T, anyhow::Error>
     where
         T: DeserializeOwned,

@@ -35,22 +35,17 @@ pub struct GroupBalance {
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct AddFriendRequest {
-    pub email: String,
-    pub user_first_name: Option<String>,
-    pub user_last_name: Option<String>,
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AddFriendsRequest {
     #[serde(flatten)]
-    #[serde(serialize_with = "serialize_vec_add_friend_request")]
-    pub friends: Vec<AddFriendRequest>,
+    #[serde(serialize_with = "serialize_vec_email")]
+    pub emails: Vec<String>,
+    pub message: Option<String>,
+    pub allow_partial_success: Option<bool>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AddFriendsResponse {
-    pub users: Option<Vec<Friend>>, // TODO: Is the API doc wrong? This should be "friends"
+    pub users: Option<Vec<Friend>>,
     pub errors: Option<HashMap<String, Vec<String>>>,
 }
 
@@ -60,23 +55,12 @@ pub struct DeleteFriendResponse {
     pub errors: Option<HashMap<String, Vec<String>>>,
 }
 
-fn serialize_vec_add_friend_request<S: Serializer>(
-    vec: &[AddFriendRequest],
-    serializer: S,
-) -> Result<S::Ok, S::Error> {
+fn serialize_vec_email<S: Serializer>(vec: &[String], serializer: S) -> Result<S::Ok, S::Error> {
     let mut map = HashMap::new();
 
-    for (i, friend) in vec.iter().enumerate() {
-        if let Some(ref first_name) = friend.user_first_name {
-            map.insert(
-                format!("friends__{}__first_name", i),
-                first_name.to_string(),
-            );
-        }
-        if let Some(ref last_name) = friend.user_last_name {
-            map.insert(format!("friends__{}__last_name", i), last_name.to_string());
-        }
-        map.insert(format!("friends__{}__email", i), friend.email.to_string());
+    for (i, email) in vec.iter().enumerate() {
+        map.insert(format!("users[{}][email]", i), email.to_owned());
+        map.insert(format!("users[{}][name]", i), email.to_owned());
     }
 
     map.serialize(serializer)

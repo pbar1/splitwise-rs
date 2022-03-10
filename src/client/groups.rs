@@ -108,7 +108,6 @@ mod integration_tests {
         client.groups().delete_group(id).await.unwrap();
     }
 
-    // TODO: Use a user that the test user is friends with, or this will continue to fail
     #[test(tokio::test)]
     async fn add_remove_user_from_group_works() {
         let client = Client::default();
