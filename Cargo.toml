@@ -9,6 +9,10 @@ keywords = ["splitwise", "client", "money"]
 categories = ["web-programming::http-client"]
 rust-version = "1.56.1"
 edition = "2021"
+exclude = [
+  "examples/*",
+  "test/*",
+]
 
 # TODO: features
 
