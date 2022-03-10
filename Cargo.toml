@@ -1,7 +1,16 @@
 [package]
 name = "splitwise"
 version = "0.1.0"
+description = "Splitwise SDK for Rust"
+authors = ["pbar <pbar1@users.noreply.github.com>"]
+license = "Apache-2.0"
+repository = "https://github.com/pbar1/splitwise-rs"
+keywords = ["splitwise", "client", "money"]
+categories = ["web-programming::http-client"]
+rust-version = "1.56.1"
 edition = "2021"
+
+# TODO: features
 
 [dependencies]
 anyhow = "1"
@@ -14,6 +23,7 @@ serde_json = "1"
 serde_qs = "0.9"
 serde_repr = "0.1"
 url = "2"
+oauth2 = "4"
 
 [dev-dependencies]
 env_logger = "0.9"
