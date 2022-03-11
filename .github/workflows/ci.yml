@@ -15,7 +15,6 @@ jobs:
         profile: minimal
         toolchain: nightly
         override: true
-    - uses: Swatinem/rust-cache@v1
     - uses: actions-rs/cargo@v1
       with:
         command: check
@@ -30,12 +29,13 @@ jobs:
         profile: minimal
         toolchain: nightly
         override: true
-    - uses: Swatinem/rust-cache@v1
     - uses: actions-rs/cargo@v1
       with:
         command: test
       env:
         SPLITWISE_API_KEY: ${{ secrets.SPLITWISE_API_KEY }}
+        SPLITWISE_CLIENT_ID: ${{ secrets.SPLITWISE_CLIENT_ID }}
+        SPLITWISE_CLIENT_SECRET: ${{ secrets.SPLITWISE_CLIENT_SECRET }}
 
   fmt:
     name: Rustfmt
