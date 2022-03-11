@@ -143,10 +143,12 @@ pub struct UserByShares {
     pub last_name: Option<String>,
     pub email: Option<String>,
 
-    /// Decimal amount as a string with 2 decimal places. The amount this user paid for the expense
+    /// Decimal amount as a string with 2 decimal places. The amount this user
+    /// paid for the expense
     pub paid_share: Option<String>,
 
-    /// Decimal amount as a string with 2 decimal places. The amount this user owes for the expense
+    /// Decimal amount as a string with 2 decimal places. The amount this user
+    /// owes for the expense
     pub owed_share: Option<String>,
 }
 

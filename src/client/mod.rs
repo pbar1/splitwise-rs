@@ -31,8 +31,9 @@ pub struct Client {
 }
 
 impl Default for Client {
-    /// Creates a default Splitwise API client using a default Reqwest HTTP client, the official
-    /// Splitwise API URL, and an API key sourced from the environment variable `SPLITWISE_API_KEY`.
+    /// Creates a default Splitwise API client using a default Reqwest HTTP
+    /// client, the official Splitwise API URL, and an API key sourced from
+    /// the environment variable `SPLITWISE_API_KEY`.
     fn default() -> Self {
         let http_client = reqwest::Client::default();
         let base_url = Url::parse("https://secure.splitwise.com/api/v3.0/").unwrap();
@@ -48,7 +49,8 @@ impl Default for Client {
 }
 
 impl Client {
-    /// Builds a new Splitwise client from the current one, with the given HTTP client as an override.
+    /// Builds a new Splitwise client from the current one, with the given HTTP
+    /// client as an override.
     pub fn with_http_client(self, http_client: reqwest::Client) -> Self {
         Self {
             http_client,
@@ -57,7 +59,8 @@ impl Client {
         }
     }
 
-    /// Builds a new Splitwise client from the current one, with the given API base URL as an override.
+    /// Builds a new Splitwise client from the current one, with the given API
+    /// base URL as an override.
     pub fn with_base_url(self, base_url: &str) -> Result<Self, anyhow::Error> {
         let mut ensured_base_url = base_url.to_string();
         if !ensured_base_url.ends_with('/') {
@@ -71,7 +74,8 @@ impl Client {
         })
     }
 
-    /// Builds a new Splitwise client from the current one, with the given API key as an override.
+    /// Builds a new Splitwise client from the current one, with the given API
+    /// key as an override.
     pub fn with_api_key(self, api_key: Secret<String>) -> Self {
         let authorization = format!("Bearer {}", api_key.expose_secret()).into();
         Self {
@@ -81,7 +85,8 @@ impl Client {
         }
     }
 
-    /// Builds a new Splitwise client from the current one, performing an OAuth 2.0 Authorization Code flow.
+    /// Builds a new Splitwise client from the current one, performing an OAuth
+    /// 2.0 Authorization Code flow.
     // pub fn with_oauth(self, )
 
     /// Decodes HTTP response into Splitwise API types or errors.
