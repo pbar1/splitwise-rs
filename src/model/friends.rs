@@ -1,39 +1,30 @@
 use std::collections::HashMap;
 
-use chrono::Utc;
 use serde::{Deserialize, Serialize, Serializer};
 
-use crate::model::{Balance, Image};
+use crate::model::{users::User, Balance};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct FriendsWrapper {
-    pub friends: Vec<Friend>,
+    pub friends: Vec<User>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct FriendWrapper {
-    pub friend: Friend,
+    pub friend: User,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Friend {
-    pub id: Option<i64>,
-    pub first_name: Option<String>,
-    pub last_name: Option<String>,
-    pub email: Option<String>,
-    pub registration_status: Option<String>,
-    pub picture: Option<Image>,
-    pub groups: Option<Vec<GroupBalance>>,
-    pub balance: Option<Vec<Balance>>,
-    pub updated_at: Option<chrono::DateTime<Utc>>,
-}
-
+/// List of balances and their associated group.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GroupBalance {
+    /// Group ID of the group that the balances are in.
     pub group_id: Option<i64>,
+
+    /// List of balances in the group.
     pub balance: Option<Vec<Balance>>,
 }
 
+/// Splitwise `add_friends` request.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AddFriendsRequest {
     #[serde(flatten)]
@@ -43,12 +34,14 @@ pub struct AddFriendsRequest {
     pub allow_partial_success: Option<bool>,
 }
 
+/// Splitwise `add_friends` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AddFriendsResponse {
-    pub users: Option<Vec<Friend>>,
+    pub users: Option<Vec<User>>,
     pub errors: Option<HashMap<String, Vec<String>>>,
 }
 
+/// Splitwise `delete_friend` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DeleteFriendResponse {
     pub success: bool,

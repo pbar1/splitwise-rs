@@ -1,33 +1,58 @@
 use crate::{
     client::Client,
-    model::friends::{
-        AddFriendsRequest, AddFriendsResponse, DeleteFriendResponse, Friend, FriendWrapper,
-        FriendsWrapper,
+    model::{
+        friends::{
+            AddFriendsRequest, AddFriendsResponse, DeleteFriendResponse, FriendWrapper,
+            FriendsWrapper,
+        },
+        users::User,
     },
 };
 
+/// Friends.
+///
+/// [Splitwise API docs](https://dev.splitwise.com/#tag/friends)
 #[derive(Debug)]
 pub struct FriendsSvc<'c> {
     client: &'c Client,
 }
 
 impl<'c> FriendsSvc<'c> {
+    /// Creates an instance of `FriendsSvc`.
     pub fn new(client: &'c Client) -> Self {
         Self { client }
     }
 
-    pub async fn list_friends(&self) -> Result<Vec<Friend>, anyhow::Error> {
+    /// List current user's friends.
+    ///
+    /// **Note:** `group` objects only include group balances with that friend.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/friends/paths/~1get_friends/get)
+    pub async fn list_friends(&self) -> Result<Vec<User>, anyhow::Error> {
         let url = self.client.base_url.join("get_friends")?;
         let response: FriendsWrapper = self.client.get(url).await?;
         Ok(response.friends)
     }
 
-    pub async fn get_friend(&self, id: i64) -> Result<Friend, anyhow::Error> {
+    /// Get details about a friend.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/friends/paths/~1get_friend~1{id}/get)
+    pub async fn get_friend(&self, id: i64) -> Result<User, anyhow::Error> {
         let url = self.client.base_url.join(&format!("get_friend/{}", id))?;
         let response: FriendWrapper = self.client.get(url).await?;
         Ok(response.friend)
     }
 
+    // NOTE: An endpoint `POST /create_friend` also exists, according to the API
+    // documentation. However, we chose not to implement it due to
+    // inconsistencies in its actual usage versus what is documented, as well as
+    // its fuctionality being a subset of the `POST /create_friends`.
+    //
+    // [Splitwise API docs](https://dev.splitwise.com/#tag/friends/paths/~1create_friend/post)
+
+    /// Add multiple friends at once.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/friends/paths/~1create_friends/post)
     // NOTE: This endpoint behaves a bit differently than the API documents suggest.
     // After inspection in the browser debugger, we'll be using that flow instead.
     pub async fn add_friends(
@@ -39,6 +64,12 @@ impl<'c> FriendsSvc<'c> {
         Ok(response)
     }
 
+    /// Given a friend ID, break off the friendship between the current user and
+    /// the specified user.
+    ///
+    /// **Note:** You must check the success value of the response.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/friends/paths/~1delete_friend~1{id}/post)
     pub async fn delete_friend(&self, id: i64) -> Result<DeleteFriendResponse, anyhow::Error> {
         let url = self
             .client
@@ -100,7 +131,7 @@ mod integration_tests {
                 .unwrap()
         );
 
-        let list = Client::default().friends().list_friends().await.unwrap();
+        let list = client.friends().list_friends().await.unwrap();
         debug!("list_friends: {:?}", list);
         let id = list.first().unwrap().id.unwrap();
 

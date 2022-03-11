@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::{Balance, Image};
+use crate::model::{friends::GroupBalance, Balance, Image};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct UserWrapper {
@@ -52,8 +52,14 @@ pub struct User {
     /// ISO_639-1 2-letter locale code
     pub locale: Option<String>,
 
-    /// List of balances that the user carries in a group.
+    /// List of balances that the user carries.
     pub balance: Option<Vec<Balance>>,
+
+    /// List of groups and and their associated balances that the user carries.
+    pub groups: Option<Vec<GroupBalance>>,
+
+    /// Timestamp of when this user was last updated.
+    pub updated_at: Option<chrono::DateTime<chrono::Utc>>,
 }
 
 /// Splitwise `update_user` request.
