@@ -1,6 +1,6 @@
 [package]
 name = "splitwise"
-version = "0.1.0"
+version = "0.1.1"
 description = "Splitwise SDK for Rust"
 authors = ["pbar <pbar1@users.noreply.github.com>"]
 license = "Apache-2.0"
