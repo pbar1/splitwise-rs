@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::model::{expenses::Expense, Image};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CurrenciesWrapper {
+pub(crate) struct CurrenciesWrapper {
     pub currencies: Vec<Currency>,
 }
 
@@ -16,7 +16,7 @@ pub struct Currency {
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CategoriesWrapper {
+pub(crate) struct CategoriesWrapper {
     pub categories: Vec<Category>,
 }
 

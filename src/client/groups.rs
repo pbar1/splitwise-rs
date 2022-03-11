@@ -1,70 +1,122 @@
 use crate::{
     client::Client,
     model::groups::{
-        AddUserToGroupRequest, AddUserToGroupResponse, CreateGroupRequest, DeleteGroupResponse,
-        Group, GroupWrapper, GroupsWrapper, RemoveUserFromGroupRequest,
-        RemoveUserFromGroupResponse, RestoreGroupResponse,
+        Group, GroupAddUserRequest, GroupAddUserResponse, GroupCreateRequest, GroupDeleteResponse,
+        GroupRemoveUserRequest, GroupRemoveUserResponse, GroupRestoreResponse, GroupUser,
+        GroupWrapper, GroupsWrapper,
     },
 };
 
+/// A Group represents a collection of users who share expenses together. For
+/// example, some users use a Group to aggregate expenses related to an
+/// apartment. Others use it to represent a trip. Expenses assigned to a group
+/// are split among the users of that group. Importantly, two users in a Group
+/// can also have expenses with one another outside of the Group.
+///
+/// [Splitwise API docs](https://dev.splitwise.com/#tag/groups)
 #[derive(Debug)]
 pub struct GroupsSvc<'c> {
     client: &'c Client,
 }
 
 impl<'c> GroupsSvc<'c> {
+    /// Creates an instance of `GroupsSvc`.
     pub fn new(client: &'c Client) -> Self {
         Self { client }
     }
 
+    /// List the current user's groups.
+    ///
+    /// **Note:** Expenses that are not associated with a group are listed in a
+    /// group with ID 0.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/groups/paths/~1get_groups/get)
     pub async fn list_groups(&self) -> Result<Vec<Group>, anyhow::Error> {
         let url = self.client.base_url.join("get_groups")?;
         let response: GroupsWrapper = self.client.get(url).await?;
         Ok(response.groups)
     }
 
+    /// Get information about a group.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/groups/paths/~1get_group~1{id}/get)
     pub async fn get_group(&self, id: i64) -> Result<Group, anyhow::Error> {
         let url = self.client.base_url.join(&format!("get_group/{}", id))?;
         let response: GroupWrapper = self.client.get(url).await?;
         Ok(response.group)
     }
 
-    pub async fn create_group(&self, request: CreateGroupRequest) -> Result<Group, anyhow::Error> {
+    /// Creates a new group. Adds the current user to the group by default.
+    ///
+    /// **Note:** The user's email or ID must be provided.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/groups/paths/~1create_group/post)
+    pub async fn create_group(&self, request: GroupCreateRequest) -> Result<Group, anyhow::Error> {
         let url = self.client.base_url.join("create_group")?;
         let response: GroupWrapper = self.client.post(url, &request).await?;
         Ok(response.group)
     }
 
-    pub async fn delete_group(&self, id: i64) -> Result<DeleteGroupResponse, anyhow::Error> {
+    /// Delete an existing group. Destroys all associated records (expenses,
+    /// etc).
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/groups/paths/~1delete_group~1{id}/post)
+    pub async fn delete_group(&self, id: i64) -> Result<GroupDeleteResponse, anyhow::Error> {
         let url = self.client.base_url.join(&format!("delete_group/{}", id))?;
-        let response: DeleteGroupResponse = self.client.post_no_body(url).await?;
+        let response: GroupDeleteResponse = self.client.post_no_body(url).await?;
         Ok(response)
     }
 
-    pub async fn restore_group(&self, id: i64) -> Result<RestoreGroupResponse, anyhow::Error> {
+    /// Restores a deleted group.
+    ///
+    /// **Note:** You must check the success value of the response.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/groups/paths/~1undelete_group~1{id}/post)
+    pub async fn restore_group(&self, id: i64) -> Result<GroupRestoreResponse, anyhow::Error> {
         let url = self
             .client
             .base_url
             .join(&format!("undelete_group/{}", id))?;
-        let response: RestoreGroupResponse = self.client.post_no_body(url).await?;
+        let response: GroupRestoreResponse = self.client.post_no_body(url).await?;
         Ok(response)
     }
 
+    /// Add a user to a group.
+    ///
+    /// **Note:** You must check the success value of the response.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/groups/paths/~1add_user_to_group/post)
     pub async fn add_user_to_group(
         &self,
-        request: AddUserToGroupRequest,
-    ) -> Result<AddUserToGroupResponse, anyhow::Error> {
+        group_id: i64,
+        user: GroupUser,
+    ) -> Result<GroupAddUserResponse, anyhow::Error> {
         let url = self.client.base_url.join("add_user_to_group")?;
-        let response: AddUserToGroupResponse = self.client.post(url, &request).await?;
+        let request = GroupAddUserRequest {
+            group_id,
+            user_id: user.user_id,
+            first_name: user.first_name,
+            last_name: user.last_name,
+            email: user.email,
+        };
+        let response: GroupAddUserResponse = self.client.post(url, &request).await?;
         Ok(response)
     }
 
+    /// Remove a user from a group. Does not succeed if the user has a non-zero
+    /// balance.
+    ///
+    /// **Note:** You must check the success value of the response.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/groups/paths/~1remove_user_from_group/post)
     pub async fn remove_user_from_group(
         &self,
-        request: RemoveUserFromGroupRequest,
-    ) -> Result<RemoveUserFromGroupResponse, anyhow::Error> {
+        group_id: i64,
+        user_id: i64,
+    ) -> Result<GroupRemoveUserResponse, anyhow::Error> {
         let url = self.client.base_url.join("remove_user_from_group")?;
-        let response: RemoveUserFromGroupResponse = self.client.post(url, &request).await?;
+        let request = GroupRemoveUserRequest { user_id, group_id };
+        let response: GroupRemoveUserResponse = self.client.post(url, &request).await?;
         Ok(response)
     }
 }
@@ -98,7 +150,7 @@ mod integration_tests {
 
         let create = client
             .groups()
-            .create_group(CreateGroupRequest {
+            .create_group(GroupCreateRequest {
                 name: name.clone(),
                 group_type: Some("apartment".to_string()),
                 simplify_by_default: Some(true),
@@ -141,6 +193,7 @@ mod integration_tests {
         debug!("group: {:#?}", group);
         let group_id = group.clone().unwrap().id.unwrap();
 
+        // TODO: this is failing
         // Find a user that is not ourself
         let own_user_id = client.users().get_current_user().await.unwrap().id.unwrap();
         let mut user: Option<User> = None;
@@ -154,7 +207,7 @@ mod integration_tests {
 
         let removed = client
             .groups()
-            .remove_user_from_group(RemoveUserFromGroupRequest { group_id, user_id })
+            .remove_user_from_group(group_id, user_id)
             .await
             .unwrap();
         debug!("removed: {:?}", removed);
@@ -162,11 +215,13 @@ mod integration_tests {
 
         let added = client
             .groups()
-            .add_user_to_group(AddUserToGroupRequest {
+            .add_user_to_group(
                 group_id,
-                user_id: Some(user_id),
-                ..AddUserToGroupRequest::default()
-            })
+                GroupUser {
+                    user_id: Some(user_id),
+                    ..GroupUser::default()
+                },
+            )
             .await
             .unwrap();
         debug!("added: {:?}", added);

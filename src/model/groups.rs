@@ -1,6 +1,5 @@
 use std::collections::HashMap;
 
-use chrono::Utc;
 use serde::{Deserialize, Serialize, Serializer};
 
 use crate::model::{users::User, Image};
@@ -15,63 +14,123 @@ pub(crate) struct GroupWrapper {
     pub group: Group,
 }
 
+/// Splitwise group.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Group {
+    /// Group ID.
     pub id: Option<i64>,
+
+    /// Group name.
     pub name: Option<String>,
+
+    /// What is the group used for? One of:
+    /// - `apartment`
+    /// - `house`
+    /// - `trip`
+    /// - `other`
     pub group_type: Option<String>,
-    pub updated_at: Option<chrono::DateTime<Utc>>,
+
+    /// Timestamp of when the group was last updated.
+    pub updated_at: Option<chrono::DateTime<chrono::Utc>>,
+
+    /// Turn on simplify debts?
     pub simplify_by_default: Option<bool>,
+
+    /// List of users that are members of the group.
     pub members: Option<Vec<User>>,
-    pub original_debts: Option<Vec<Debt>>,
-    pub simplified_debts: Option<Vec<Debt>>,
+
+    /// List of debts between users in the group.
+    pub original_debts: Option<Vec<GroupDebt>>,
+
+    /// List of simplified debts between users in the group.
+    pub simplified_debts: Option<Vec<GroupDebt>>,
+
+    /// Avatar image for the group.
     pub avatar: Option<Image>,
+
+    /// Whether the group's avatar is user-provided.
     pub custom_avatar: Option<bool>,
+
+    /// Cover photo for the group.
     pub cover_photo: Option<Image>,
+
+    /// Invite link to the group.
     pub invite_link: Option<String>,
 }
 
+/// Debt relationship between two users.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct Debt {
+pub struct GroupDebt {
+    /// ID of the user who owes money.
     pub from: Option<i64>,
+
+    /// ID of the user who paid money.
     pub to: Option<i64>,
+
+    /// Decimal amount as a string with 2 decimal places.
     pub amount: Option<String>,
+
+    /// A currency code. Must be in the list from `get_currencies`.
     pub currency_code: Option<String>,
 }
 
+/// Splitwise `create_group` request.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CreateGroupRequest {
+pub struct GroupCreateRequest {
+    /// Group name.
     pub name: String,
+
+    /// What is the group used for? One of:
+    /// - `apartment`
+    /// - `house`
+    /// - `trip`
+    /// - `other`
     pub group_type: Option<String>,
+
+    /// Turn on simplify debts?
     pub simplify_by_default: Option<bool>,
 
+    /// List of users to invite to the group.
     #[serde(flatten)]
     #[serde(serialize_with = "serialize_option_vec_create_group_user")]
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub users: Option<Vec<CreateGroupUser>>,
+    pub users: Option<Vec<GroupUser>>,
 }
 
+/// Information to invite a user to a group. The user's email or ID must be
+/// provided.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct CreateGroupUser {
-    pub user_id: Option<String>,
+pub struct GroupUser {
+    /// User ID.
+    pub user_id: Option<i64>,
+
+    /// User first name.
     pub first_name: Option<String>,
+
+    /// User last name.
     pub last_name: Option<String>,
+
+    /// User email address.
     pub email: Option<String>,
 }
 
+// TODO: does this also have an error field?
+/// Splitwise `delete_group` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct DeleteGroupResponse {
+pub struct GroupDeleteResponse {
+    /// Whether the request was successful.
     pub success: bool,
 }
 
+/// Splitwise `restore_group` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct RestoreGroupResponse {
+pub struct GroupRestoreResponse {
     pub success: bool,
-    pub errors: Option<Vec<String>>,
+    pub errors: Option<Vec<String>>, // TODO: handle error
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct AddUserToGroupRequest {
+pub(crate) struct GroupAddUserRequest {
     pub group_id: i64,
     pub user_id: Option<i64>,
     pub first_name: Option<String>,
@@ -79,28 +138,29 @@ pub struct AddUserToGroupRequest {
     pub email: Option<String>,
 }
 
+/// Splitwise `add_user_to_group` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct AddUserToGroupResponse {
+pub struct GroupAddUserResponse {
     pub success: bool,
     pub user: Option<User>,
-    pub errors: Option<HashMap<String, Vec<String>>>,
+    pub errors: Option<HashMap<String, Vec<String>>>, // TODO: handle error
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct RemoveUserFromGroupRequest {
+pub(crate) struct GroupRemoveUserRequest {
     pub group_id: i64,
     pub user_id: i64,
 }
 
-// TODO: "errors" is [] when none, {} when some - this is endemic to all of Splitwise
+/// Splitwise `remove_user_from_group` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct RemoveUserFromGroupResponse {
+pub struct GroupRemoveUserResponse {
     pub success: bool,
-    pub errors: Option<Vec<String>>,
+    pub errors: Option<Vec<String>>, // TODO: handle error
 }
 
 fn serialize_option_vec_create_group_user<S: Serializer>(
-    vec: &Option<Vec<CreateGroupUser>>,
+    vec: &Option<Vec<GroupUser>>,
     serializer: S,
 ) -> Result<S::Ok, S::Error> {
     let mut map = HashMap::new();

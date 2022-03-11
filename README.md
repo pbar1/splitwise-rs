@@ -8,16 +8,16 @@ Splitwise SDK for Rust
 
 ## Progress
 
-| API            | Implementations | Integration Tests | Documented |
-|----------------|-----------------|-------------------|------------|
-| Authentication | 1/2             | 1/2               |            |
-| Users          | Complete        | Complete          | Complete   |
-| Groups         | Complete        | Complete          |            |
-| Friends        | Complete        | Complete          |            |
-| Expenses       | Complete        | Complete          |            |
-| Comments       | Complete        | Complete          |            |
-| Notifications  | Complete        | Complete          |            |
-| Other          | Complete        | Complete          |            |
+| API            | Implementations | Integration Tests | Documentation |
+|----------------|-----------------|-------------------|---------------|
+| Authentication | 1/2             | 1/2               |               |
+| Users          | Complete        | Complete          | Complete      |
+| Groups         | Complete        | Complete          | Complete      |
+| Friends        | Complete        | Complete          |               |
+| Expenses       | Complete        | Complete          |               |
+| Comments       | Complete        | Complete          |               |
+| Notifications  | Complete        | Complete          |               |
+| Other          | Complete        | Complete          |               |
 
 ## TODO
 

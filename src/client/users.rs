@@ -3,7 +3,9 @@ use crate::{
     model::users::{UpdateUserRequest, User, UserWrapper},
 };
 
-/// [Resources to access and modify user information.](https://dev.splitwise.com/#tag/users)
+/// Resources to access and modify user information.
+///
+/// [Splitwise API docs](https://dev.splitwise.com/#tag/users)
 #[derive(Debug)]
 pub struct UsersSvc<'c> {
     client: &'c Client,
@@ -15,21 +17,27 @@ impl<'c> UsersSvc<'c> {
         Self { client }
     }
 
-    /// [Get information about the current user.](https://dev.splitwise.com/#tag/users/paths/~1get_current_user/get)
+    /// Get information about the current user.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/users/paths/~1get_current_user/get)
     pub async fn get_current_user(&self) -> Result<User, anyhow::Error> {
         let url = self.client.base_url.join("get_current_user")?;
         let response: UserWrapper = self.client.get(url).await?;
         Ok(response.user)
     }
 
-    /// [Get information about another user.](https://dev.splitwise.com/#tag/users/paths/~1get_user~1{id}/get)
+    /// Get information about another user.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/users/paths/~1get_user~1{id}/get)
     pub async fn get_user(&self, id: i64) -> Result<User, anyhow::Error> {
         let url = self.client.base_url.join(&format!("get_user/{}", id))?;
         let response: UserWrapper = self.client.get(url).await?;
         Ok(response.user)
     }
 
-    /// [Update a user.](https://dev.splitwise.com/#tag/users/paths/~1update_user~1{id}/post)
+    /// Update a user.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/users/paths/~1update_user~1{id}/post)
     pub async fn update_user(
         &self,
         id: i64,
