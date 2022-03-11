@@ -27,24 +27,36 @@ pub struct GroupBalance {
 /// Splitwise `add_friends` request.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AddFriendsRequest {
+    /// List of emails of users to add as friends.
     #[serde(flatten)]
     #[serde(serialize_with = "serialize_vec_email")]
     pub emails: Vec<String>,
+
+    /// Message to send to users being added as a friend.
     pub message: Option<String>,
+
+    /// Whether to allow the request to succeed if not every friend is able to
+    /// be added.
     pub allow_partial_success: Option<bool>,
 }
 
 /// Splitwise `add_friends` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct AddFriendsResponse {
+    /// List of users that were added as a friend.
     pub users: Option<Vec<User>>,
+
+    /// Errors that occurred during the request.
     pub errors: Option<HashMap<String, Vec<String>>>,
 }
 
 /// Splitwise `delete_friend` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DeleteFriendResponse {
+    /// Whether the request was successful.
     pub success: bool,
+
+    /// Errors that occurred during the request.
     pub errors: Option<HashMap<String, Vec<String>>>,
 }
 

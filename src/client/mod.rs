@@ -23,6 +23,7 @@ pub mod notifications;
 pub mod other;
 pub mod users;
 
+/// Splitwise API client.
 #[derive(Debug, Clone)]
 pub struct Client {
     http_client: reqwest::Client,

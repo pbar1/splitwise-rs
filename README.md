@@ -14,7 +14,7 @@ Splitwise SDK for Rust
 | Authentication | 1/2             | 1/2               |               |
 | Users          | Complete        | Complete          | Complete      |
 | Groups         | Complete        | Complete          | Complete      |
-| Friends        | Complete        | Complete          |               |
+| Friends        | Complete        | Complete          | Complete      |
 | Expenses       | Complete        | Complete          |               |
 | Comments       | Complete        | Complete          |               |
 | Notifications  | Complete        | Complete          |               |

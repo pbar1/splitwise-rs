@@ -3,6 +3,9 @@ use crate::{
     model::comments::{Comment, CommentWrapper, CommentsWrapper, CreateCommentRequest},
 };
 
+/// Comments.
+///
+/// [Splitwise API docs](https://dev.splitwise.com/#tag/comments)
 #[derive(Debug)]
 pub struct CommentsSvc<'c> {
     client: &'c Client,
@@ -13,7 +16,10 @@ impl<'c> CommentsSvc<'c> {
         Self { client }
     }
 
-    pub async fn list_comments(&self, expense_id: i64) -> Result<Vec<Comment>, anyhow::Error> {
+    /// Get expense comments.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/comments/paths/~1get_comments/get)
+    pub async fn get_comments(&self, expense_id: i64) -> Result<Vec<Comment>, anyhow::Error> {
         let url = self
             .client
             .base_url
@@ -22,6 +28,9 @@ impl<'c> CommentsSvc<'c> {
         Ok(response.comments)
     }
 
+    /// Create a comment.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/comments/paths/~1create_comment/post)
     pub async fn create_comment(
         &self,
         expense_id: i64,
@@ -36,6 +45,9 @@ impl<'c> CommentsSvc<'c> {
         Ok(response.comment)
     }
 
+    /// Deletes a comment. Returns the deleted comment.
+    ///
+    /// [Splitwise API docs](https://dev.splitwise.com/#tag/comments/paths/~1delete_comment/post)
     // NOTE: API docs are currently ambiguous on whether to pass the comment ID
     // via a path or query parameter. However, one of the maintainers has noted
     // that either work.
@@ -61,7 +73,7 @@ mod integration_tests {
     async fn get_comments_works() {
         let _response = Client::default()
             .comments()
-            .list_comments(1606307156)
+            .get_comments(1606307156)
             .await
             .unwrap();
     }
