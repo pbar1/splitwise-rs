@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize, Serializer};
 
-use crate::model::{users::User, Image};
+use crate::model::{users::User, Debt, Image};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct GroupsWrapper {
@@ -40,10 +40,10 @@ pub struct Group {
     pub members: Option<Vec<User>>,
 
     /// List of debts between users in the group.
-    pub original_debts: Option<Vec<GroupDebt>>,
+    pub original_debts: Option<Vec<Debt>>,
 
     /// List of simplified debts between users in the group.
-    pub simplified_debts: Option<Vec<GroupDebt>>,
+    pub simplified_debts: Option<Vec<Debt>>,
 
     /// Avatar image for the group.
     pub avatar: Option<Image>,
@@ -56,22 +56,6 @@ pub struct Group {
 
     /// Invite link to the group.
     pub invite_link: Option<String>,
-}
-
-/// Debt relationship between two users.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct GroupDebt {
-    /// ID of the user who owes money.
-    pub from: Option<i64>,
-
-    /// ID of the user who paid money.
-    pub to: Option<i64>,
-
-    /// Decimal amount as a string with 2 decimal places.
-    pub amount: Option<String>,
-
-    /// A currency code. Must be in the list from `get_currencies`.
-    pub currency_code: Option<String>,
 }
 
 /// Splitwise `create_group` request.

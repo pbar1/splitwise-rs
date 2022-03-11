@@ -132,7 +132,7 @@ mod integration_tests {
     use test_log::test;
 
     use super::*;
-    use crate::model::expenses::UserByShares;
+    use crate::model::expenses::UserShare;
 
     #[test(tokio::test)]
     async fn create_update_get_delete_undelete_list_expense_works() {
@@ -187,11 +187,11 @@ mod integration_tests {
             cost: "1".to_string(),
             description: "Fake by-shares expense".to_string(),
             group_id: 0,
-            users: Some(vec![UserByShares {
+            users: Some(vec![UserShare {
                 user_id: Some(48903837),
                 owed_share: Some("1".to_string()),
                 paid_share: Some("1".to_string()),
-                ..UserByShares::default()
+                ..UserShare::default()
             }]),
             ..CreateExpenseRequest::default()
         };
