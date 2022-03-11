@@ -29,3 +29,4 @@ Splitwise SDK for Rust
 - All of the `.error` and `.errors` properties should be handled more robustly
 - Disambiguate API names - ie, prefer `list_users` over `get_users`, as `get_user` also exists
 - Cut down on some superfluous `*Request` and `*Response` types in favor of function params
+- Consider flattening public crate structure
