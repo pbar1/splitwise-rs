@@ -1,7 +1,8 @@
 # splitwise-rs
 
-[![Crates.io](https://img.shields.io/crates/v/splitwise.svg)](https://crates.io/crates/splitwise)
+[![CI](https://github.com/pbar1/splitwise-rs/actions/workflows/ci.yml/badge.svg)](https://github.com/pbar1/splitwise-rs/actions/workflows/ci.yml)
 [![Docs.rs](https://img.shields.io/docsrs/splitwise)](https://docs.rs/splitwise)
+[![Crates.io](https://img.shields.io/crates/v/splitwise.svg)](https://crates.io/crates/splitwise)
 [![Minimum Supported Rust Version](https://img.shields.io/badge/MSRV-1.56.1-dea584.svg)](https://github.com/rust-lang/rust/releases/tag/1.56.1)
 
 Splitwise SDK for Rust
