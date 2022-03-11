@@ -51,36 +51,108 @@ impl<'c> FriendsSvc<'c> {
 
 #[cfg(test)]
 mod integration_tests {
-    use std::ops::Index;
-
     use log::debug;
     use test_log::test;
 
     use super::*;
+    use crate::model::groups::{GroupCreateRequest, GroupUser};
 
+    // NOTE: This test also contains `create_group`, `delete_group`,
+    // `add_user_to_group`, and `remove_user_from_group`, which are from the
+    // `groups` API.
+    //
+    // Splitwise users cannot be added to a group unless they are friends with
+    // the user that is attempting to add them. Likewise, a user cannot be
+    // unfriended if they remain in a group with the current user.
+    //
+    // Similarly, Splitwise groups cannot be deleted if they still contain
+    // users other than the user that created them.
+    //
+    // Thus, this test runs the following flow:
+    //   1. Add friend
+    //   2. List friends
+    //   3. Get friend
+    //   4. -> Create group
+    //   5. ---> Add user to group
+    //   6. ---> Remove user from group
+    //   7. -> Delete group
+    //   8. Delete friend
     #[test(tokio::test)]
-    async fn list_get_delete_add_friends_works() {
+    async fn add_list_get_delete_friend_and_add_remove_user_group_works() {
         let client = Client::default();
+
+        let email = "kmalbwid@sharklasers.com".to_string();
+        let req = AddFriendsRequest {
+            emails: vec![email.clone()],
+            ..AddFriendsRequest::default()
+        };
+        let add = client.friends().add_friends(req).await.unwrap();
+        debug!("add_friends: {:?}", add);
+        assert_eq!(
+            &email,
+            add.users
+                .as_ref()
+                .unwrap()
+                .first()
+                .unwrap()
+                .email
+                .as_ref()
+                .unwrap()
+        );
 
         let list = Client::default().friends().list_friends().await.unwrap();
         debug!("list_friends: {:?}", list);
-        let id = list.index(0).id.unwrap();
+        let id = list.first().unwrap().id.unwrap();
 
         let get = client.friends().get_friend(id).await.unwrap();
         debug!("get_friend: {:?}", get);
         assert_eq!(id, get.id.unwrap());
 
+        // BEGIN GROUP TESTING -------------------------------------------------
+
+        let group = client
+            .groups()
+            .create_group(GroupCreateRequest {
+                name: "happy-happy-friends".to_string(),
+                group_type: Some("apartment".to_string()),
+                simplify_by_default: Some(true),
+                users: None,
+            })
+            .await
+            .unwrap();
+        debug!("create_group: {:#?}", group);
+        let group_id = group.id.unwrap();
+
+        let add_to_group = client
+            .groups()
+            .add_user_to_group(
+                group_id,
+                GroupUser {
+                    user_id: Some(id),
+                    ..GroupUser::default()
+                },
+            )
+            .await
+            .unwrap();
+        debug!("add_to_group: {:#?}", add_to_group);
+        assert!(add_to_group.success);
+
+        let remove_from_group = client
+            .groups()
+            .remove_user_from_group(group_id, id)
+            .await
+            .unwrap();
+        debug!("remove_from_group: {:#?}", remove_from_group);
+        assert!(remove_from_group.success);
+
+        let delete_group = client.groups().delete_group(group_id).await.unwrap();
+        debug!("delete_group: {:#?}", delete_group);
+        assert!(delete_group.success);
+
+        // END GROUP TESTING ---------------------------------------------------
+
         let delete = client.friends().delete_friend(id).await.unwrap();
         debug!("delete_friend: {:?}", delete);
         assert!(delete.success);
-
-        let req = AddFriendsRequest {
-            emails: vec![get.email.unwrap()],
-            message: None,
-            allow_partial_success: None,
-        };
-        let add = client.friends().add_friends(req).await.unwrap();
-        debug!("add_friends: {:?}", add);
-        assert_eq!(id, add.users.unwrap().index(0).id.unwrap())
     }
 }

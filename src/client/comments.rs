@@ -56,21 +56,24 @@ mod integration_tests {
 
     use super::*;
 
+    // TODO: Remove hardcoded expense ID
     #[test(tokio::test)]
     async fn get_comments_works() {
         let _response = Client::default()
             .comments()
-            .list_comments(1603994775)
+            .list_comments(1606307156)
             .await
             .unwrap();
     }
 
+    // TODO: Remove hardcoded expense ID
     #[test(tokio::test)]
     async fn create_delete_comment_works() {
         let client = Client::default();
+
         let created = client
             .comments()
-            .create_comment(1603994775, "this is a fake comment".to_string())
+            .create_comment(1606307156, "this is a fake comment".to_string())
             .await
             .unwrap();
         let deleted = client.comments().delete_comment(created.id).await.unwrap();

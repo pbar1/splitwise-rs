@@ -127,7 +127,6 @@ mod integration_tests {
     use test_log::test;
 
     use super::*;
-    use crate::model::users::User;
 
     #[test(tokio::test)]
     async fn list_get_group_works() {
@@ -174,57 +173,5 @@ mod integration_tests {
         let delete = client.groups().delete_group(id).await.unwrap();
         debug!("delete: {:?}", delete);
         assert!(delete.success);
-    }
-
-    #[test(tokio::test)]
-    async fn add_remove_user_from_group_works() {
-        let client = Client::default();
-
-        let list = client.groups().list_groups().await.unwrap();
-        debug!("list: {:#?}", list);
-
-        // Find a group that is not "Non-group expenses"
-        let mut group: Option<Group> = None;
-        for g in list {
-            if g.id.unwrap() != 0 {
-                group = Some(g);
-            }
-        }
-        debug!("group: {:#?}", group);
-        let group_id = group.clone().unwrap().id.unwrap();
-
-        // TODO: this is failing
-        // Find a user that is not ourself
-        let own_user_id = client.users().get_current_user().await.unwrap().id.unwrap();
-        let mut user: Option<User> = None;
-        for u in group.unwrap().members.unwrap() {
-            if u.id.unwrap() != own_user_id {
-                user = Some(u);
-            }
-        }
-        debug!("user: {:#?}", user);
-        let user_id = user.unwrap().id.unwrap();
-
-        let removed = client
-            .groups()
-            .remove_user_from_group(group_id, user_id)
-            .await
-            .unwrap();
-        debug!("removed: {:?}", removed);
-        assert!(removed.success);
-
-        let added = client
-            .groups()
-            .add_user_to_group(
-                group_id,
-                GroupUser {
-                    user_id: Some(user_id),
-                    ..GroupUser::default()
-                },
-            )
-            .await
-            .unwrap();
-        debug!("added: {:?}", added);
-        assert!(added.success);
     }
 }

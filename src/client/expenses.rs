@@ -141,7 +141,7 @@ mod integration_tests {
         let request = CreateExpenseRequest {
             cost: "50.00".to_string(),
             description: format!("Fake full-flow expense {}", chrono::Utc::now()),
-            group_id: 30331347,
+            group_id: 0,
             ..CreateExpenseRequest::default()
         };
         let response = client.expenses().create_expense(request).await.unwrap();
@@ -151,7 +151,7 @@ mod integration_tests {
 
         let request = UpdateExpenseRequest {
             description: Some("new fake description".to_string()),
-            group_id: 30331347,
+            group_id: 0,
             ..UpdateExpenseRequest::default()
         };
         client.expenses().update_expense(id, request).await.unwrap();
@@ -172,7 +172,7 @@ mod integration_tests {
         let request = CreateExpenseRequest {
             cost: "50.00".to_string(),
             description: "Fake equal expense".to_string(),
-            group_id: 30331347,
+            group_id: 0,
             ..CreateExpenseRequest::default()
         };
         let client = Client::default();
@@ -186,9 +186,9 @@ mod integration_tests {
         let request = CreateExpenseRequest {
             cost: "1".to_string(),
             description: "Fake by-shares expense".to_string(),
-            group_id: 30331347,
+            group_id: 0,
             users: Some(vec![UserByShares {
-                user_id: Some(47829677),
+                user_id: Some(48903837),
                 owed_share: Some("1".to_string()),
                 paid_share: Some("1".to_string()),
                 ..UserByShares::default()
