@@ -1,5 +1,5 @@
 use crate::{
-    client::Client,
+    client::client::Client,
     model::users::{UpdateUserRequest, User, UserWrapper},
 };
 

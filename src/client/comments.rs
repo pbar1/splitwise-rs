@@ -1,5 +1,5 @@
 use crate::{
-    client::Client,
+    client::client::Client,
     model::comments::{Comment, CommentWrapper, CommentsWrapper, CreateCommentRequest},
 };
 
@@ -12,6 +12,7 @@ pub struct CommentsSvc<'c> {
 }
 
 impl<'c> CommentsSvc<'c> {
+    /// Creates a new instance of `CommentsSvc`.
     pub fn new(client: &'c Client) -> Self {
         Self { client }
     }

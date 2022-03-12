@@ -2,7 +2,8 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize, Serializer};
 
-use crate::model::{users::User, Debt, Image};
+use crate::model::users::User;
+use crate::model::shared::{Debt, Image};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct GroupsWrapper {
@@ -109,8 +110,11 @@ pub struct GroupDeleteResponse {
 /// Splitwise `restore_group` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GroupRestoreResponse {
+    /// Whether the request was successful.
     pub success: bool,
-    pub errors: Option<Vec<String>>, // TODO: handle error
+
+    /// Errors that occurred during the request.
+    pub errors: Option<Vec<String>>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -125,9 +129,14 @@ pub(crate) struct GroupAddUserRequest {
 /// Splitwise `add_user_to_group` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GroupAddUserResponse {
+    /// Whether the request was successful.
     pub success: bool,
+
+    /// Users added to the group.
     pub user: Option<User>,
-    pub errors: Option<HashMap<String, Vec<String>>>, // TODO: handle error
+
+    /// Errors that occurred during the request.
+    pub errors: Option<HashMap<String, Vec<String>>>,
 }
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -139,8 +148,11 @@ pub(crate) struct GroupRemoveUserRequest {
 /// Splitwise `remove_user_from_group` response.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct GroupRemoveUserResponse {
+    /// Whether the request was successful.
     pub success: bool,
-    pub errors: Option<Vec<String>>, // TODO: handle error
+
+    /// Errors that occurred during the request.
+    pub errors: Option<Vec<String>>,
 }
 
 fn serialize_option_vec_create_group_user<S: Serializer>(

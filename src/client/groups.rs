@@ -1,5 +1,5 @@
 use crate::{
-    client::Client,
+    client::client::Client,
     model::groups::{
         Group, GroupAddUserRequest, GroupAddUserResponse, GroupCreateRequest, GroupDeleteResponse,
         GroupRemoveUserRequest, GroupRemoveUserResponse, GroupRestoreResponse, GroupUser,

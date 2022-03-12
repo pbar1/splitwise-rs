@@ -1,6 +1,6 @@
 use chrono::{NaiveDate, TimeZone, Utc};
 use serde::{de::Deserializer, Deserialize};
-use splitwise::model::expenses::{CreateExpenseRequest, GetExpensesRequest};
+use splitwise::model::expenses::{CreateExpenseRequest, ListExpensesRequest};
 
 #[allow(dead_code)]
 #[derive(Debug, Deserialize)]
@@ -47,10 +47,10 @@ async fn main() {
     // Get a list of all expenses in a group since a certain date
     let expenses = client
         .expenses()
-        .get_expenses(GetExpensesRequest {
+        .list_expenses(ListExpensesRequest {
             group_id: Some(group_id),
             dated_after: Some(chrono::Utc.ymd(2021, 12, 31).and_hms(0, 0, 0)),
-            ..GetExpensesRequest::default()
+            ..ListExpensesRequest::default()
         })
         .await
         .unwrap();

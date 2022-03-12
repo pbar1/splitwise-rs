@@ -2,7 +2,8 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize, Serializer};
 
-use crate::model::{comments::Comment, other::Category, users::User, Debt, Image};
+use crate::model::{comments::Comment, other::Category, users::User};
+use crate::model::shared::{Debt, Image};
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct ExpenseWrapper {
@@ -143,7 +144,7 @@ pub struct Expense {
 
 /// Splitwise `get_expenses` request.
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct GetExpensesRequest {
+pub struct ListExpensesRequest {
     /// If provided, only expenses in that group will be returned, and
     /// `friend_id` will be ignored.
     pub group_id: Option<i64>,

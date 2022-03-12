@@ -7,26 +7,26 @@
 
 Splitwise SDK for Rust
 
-## Progress
+## Usage
 
-| API            | Implementations | Integration Tests | Documentation |
-|----------------|-----------------|-------------------|---------------|
-| Authentication | 1/2             | 1/2               |               |
-| Users          | Complete        | Complete          | Complete      |
-| Groups         | Complete        | Complete          | Complete      |
-| Friends        | Complete        | Complete          | Complete      |
-| Expenses       | Complete        | Complete          |               |
-| Comments       | Complete        | Complete          |               |
-| Notifications  | Complete        | Complete          |               |
-| Other          | Complete        | Complete          |               |
+The default Splitwise client reads an API key from the environment variable `SPLITWISE_API_KEY`.
+API keys can be generated in the [Splitwise developer portal](https://secure.splitwise.com/apps).
 
-## TODO
+```rust
+#[tokio::main]
+async fn main() {
+    let client = splitwise::client::Client::default();
 
-- Cargo features for sync and async
-- Make HTTP client generic and pluggable
-- Document everything
-- Handle Splitwise API versioning
-- All of the `.error` and `.errors` properties should be handled more robustly
-- Disambiguate API names - ie, prefer `list_users` over `get_users`, as `get_user` also exists
-- Cut down on some superfluous `*Request` and `*Response` types in favor of function params
-- Consider flattening public crate structure
+    let user = client.users().get_current_user().await.unwrap();
+
+    println!("Current user: {:#?}", user)
+}
+```
+
+## Roadmap
+
+- [ ] Support for sync and async via crate features
+- [ ] Make HTTP client generic, with default implementations
+- [ ] Handle Splitwise API versioning
+- [ ] More robust error handling
+- [ ] Cut down on some `Request` and `Response` types in favor of function parameters
