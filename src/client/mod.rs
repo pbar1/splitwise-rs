@@ -1,3 +1,5 @@
+#![allow(clippy::module_inception)]
+
 pub(crate) mod authentication;
 pub(crate) mod client;
 pub(crate) mod comments;
