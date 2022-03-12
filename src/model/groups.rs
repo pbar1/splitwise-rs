@@ -2,8 +2,10 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize, Serializer};
 
-use crate::model::users::User;
-use crate::model::shared::{Debt, Image};
+use crate::model::{
+    shared::{Debt, Image},
+    users::User,
+};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct GroupsWrapper {

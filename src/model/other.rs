@@ -2,8 +2,7 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::model::expenses::Expense;
-use crate::model::shared::Image;
+use crate::model::{expenses::Expense, shared::Image};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub(crate) struct CurrenciesWrapper {
