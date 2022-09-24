@@ -1,6 +1,11 @@
 # Source: https://github.com/actions-rs/meta/blob/edeebc14493689cee04cb6d941c42c36a86e9d18/recipes/quickstart.md
 
-on: [push, pull_request]
+on:
+  push: {}
+  pull_request: {}
+  schedule:
+  # Saturdays at 08:00 UTC (ie, midnight PST)
+  - cron: "0 8 * * 6"
 
 name: CI
 
