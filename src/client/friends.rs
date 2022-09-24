@@ -82,7 +82,7 @@ impl<'c> FriendsSvc<'c> {
 
 #[cfg(test)]
 mod integration_tests {
-    use log::debug;
+    use tracing::debug;
     use test_log::test;
 
     use super::*;
