@@ -4,13 +4,13 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::{expenses::Expense, shared::Image};
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct CurrenciesWrapper {
     pub currencies: Vec<Currency>,
 }
 
 /// Currency supported by Splitwise.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Currency {
     /// Mostly ISO 4217 currency codes, along with colloquial codes such as
     /// "BTC".
@@ -20,13 +20,13 @@ pub struct Currency {
     pub unit: Option<String>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct CategoriesWrapper {
     pub categories: Vec<Category>,
 }
 
 /// Category for expenses.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Category {
     /// Category ID.
     pub id: Option<i64>,
@@ -45,7 +45,7 @@ pub struct Category {
 }
 
 /// Splitwise `parse_sentence` request.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ParseSentenceRequest {
     /// A natural language sentence describing an expense.
     pub input: String,
@@ -61,7 +61,7 @@ pub struct ParseSentenceRequest {
 }
 
 /// Splitwise `parse_sentence` response.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ParseSentenceResponse {
     /// Expense object parsed from the sentence input.
     pub expense: Option<Expense>,

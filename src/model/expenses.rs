@@ -9,19 +9,19 @@ use crate::model::{
     users::User,
 };
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct ExpenseWrapper {
     pub expense: Expense,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct ExpensesWrapper {
     pub expenses: Vec<Expense>,
     pub errors: Option<HashMap<String, Vec<String>>>,
 }
 
 /// Splitwise expense.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Expense {
     /// A string representation of a decimal value, limited to 2 decimal places.
     pub cost: Option<String>,
@@ -147,7 +147,7 @@ pub struct Expense {
 }
 
 /// Splitwise `get_expenses` request.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ListExpensesRequest {
     /// If provided, only expenses in that group will be returned, and
     /// `friend_id` will be ignored.
@@ -179,7 +179,7 @@ pub struct ListExpensesRequest {
 }
 
 /// Splitwise `create_expense` request.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct CreateExpenseRequest {
     /// A string representation of a decimal value, limited to 2 decimal places.
     pub cost: String,
@@ -222,7 +222,7 @@ pub struct CreateExpenseRequest {
 }
 
 /// Splitwise `update_expense` request.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UpdateExpenseRequest {
     /// A string representation of a decimal value, limited to 2 decimal places.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -269,7 +269,7 @@ pub struct UpdateExpenseRequest {
 }
 
 /// User with share information associated with the expense.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UserShare {
     /// User associated with the expense.
     pub user: Option<User>,

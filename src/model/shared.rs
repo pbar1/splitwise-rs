@@ -3,28 +3,28 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 /// Unauthorized error.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ErrorUnauthorized {
     /// Error that occurred during this request.
     pub error: String,
 }
 
 /// Forbidden or not found error.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ErrorForbiddenOrNotFound {
     /// Errors that occurred during this request.
     pub errors: ErrorsBase,
 }
 
 /// Error wrapper.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ErrorsBase {
     /// List of errors that occurred.
     pub base: Vec<String>,
 }
 
 /// Success wrapper.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct Success {
     /// Whether the request succeeded.
     pub success: bool,
@@ -34,7 +34,7 @@ pub(crate) struct Success {
 }
 
 /// Splitwise image in various sizes.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Image {
     /// Original image size.
     pub original: Option<String>,
@@ -56,7 +56,7 @@ pub struct Image {
 }
 
 /// Balance that a user carries.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Balance {
     /// Currency code.
     pub currency_code: Option<String>,
@@ -66,7 +66,7 @@ pub struct Balance {
 }
 
 /// Debt relationship between two users.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Debt {
     /// ID of the user who owes money.
     pub from: Option<i64>,

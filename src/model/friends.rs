@@ -4,18 +4,18 @@ use serde::{Deserialize, Serialize, Serializer};
 
 use crate::model::{shared::Balance, users::User};
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct FriendsWrapper {
     pub friends: Vec<User>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct FriendWrapper {
     pub friend: User,
 }
 
 /// List of balances and their associated group.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GroupBalance {
     /// Group ID of the group that the balances are in.
     pub group_id: Option<i64>,
@@ -25,7 +25,7 @@ pub struct GroupBalance {
 }
 
 /// Splitwise `add_friends` request.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AddFriendsRequest {
     /// List of emails of users to add as friends.
     #[serde(flatten)]
@@ -41,7 +41,7 @@ pub struct AddFriendsRequest {
 }
 
 /// Splitwise `add_friends` response.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct AddFriendsResponse {
     /// List of users that were added as a friend.
     pub users: Option<Vec<User>>,
@@ -51,7 +51,7 @@ pub struct AddFriendsResponse {
 }
 
 /// Splitwise `delete_friend` response.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct DeleteFriendResponse {
     /// Whether the request was successful.
     pub success: bool,

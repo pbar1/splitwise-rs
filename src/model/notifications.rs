@@ -2,13 +2,13 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct NotificationsWrapper {
     pub notifications: Vec<Notification>,
 }
 
 /// Notification of activity on the user's account.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Notification {
     /// Notification ID.
     pub id: Option<i64>,
@@ -39,7 +39,7 @@ pub struct Notification {
 }
 
 /// Notification source.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct NotificationSource {
     /// Notification source type.
     #[serde(rename = "type")]
@@ -55,7 +55,7 @@ pub struct NotificationSource {
 /// Indicates what the notification is about.
 ///
 /// **Note:** Notification types may be added in the future without warning.
-#[derive(Debug, Clone, PartialEq, Serialize_repr, Deserialize_repr)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize_repr, Deserialize_repr)]
 #[repr(u8)]
 pub enum NotificationType {
     /// Expense added.
@@ -108,7 +108,7 @@ pub enum NotificationType {
 }
 
 /// Splitwise `get_notifications` request.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GetNotificationsRequest {
     /// If provided, returns only notifications after this time.
     pub updated_after: Option<chrono::DateTime<Utc>>,

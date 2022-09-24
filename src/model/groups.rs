@@ -7,18 +7,18 @@ use crate::model::{
     users::User,
 };
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct GroupsWrapper {
     pub groups: Vec<Group>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct GroupWrapper {
     pub group: Group,
 }
 
 /// Splitwise group.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Group {
     /// Group ID.
     pub id: Option<i64>,
@@ -62,7 +62,7 @@ pub struct Group {
 }
 
 /// Splitwise `create_group` request.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GroupCreateRequest {
     /// Group name.
     pub name: String,
@@ -86,7 +86,7 @@ pub struct GroupCreateRequest {
 
 /// Information to invite a user to a group. The user's email or ID must be
 /// provided.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GroupUser {
     /// User ID.
     pub user_id: Option<i64>,
@@ -103,14 +103,14 @@ pub struct GroupUser {
 
 // TODO: does this also have an error field?
 /// Splitwise `delete_group` response.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GroupDeleteResponse {
     /// Whether the request was successful.
     pub success: bool,
 }
 
 /// Splitwise `restore_group` response.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GroupRestoreResponse {
     /// Whether the request was successful.
     pub success: bool,
@@ -119,7 +119,7 @@ pub struct GroupRestoreResponse {
     pub errors: Option<Vec<String>>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct GroupAddUserRequest {
     pub group_id: i64,
     pub user_id: Option<i64>,
@@ -129,7 +129,7 @@ pub(crate) struct GroupAddUserRequest {
 }
 
 /// Splitwise `add_user_to_group` response.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GroupAddUserResponse {
     /// Whether the request was successful.
     pub success: bool,
@@ -141,14 +141,14 @@ pub struct GroupAddUserResponse {
     pub errors: Option<HashMap<String, Vec<String>>>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct GroupRemoveUserRequest {
     pub group_id: i64,
     pub user_id: i64,
 }
 
 /// Splitwise `remove_user_from_group` response.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct GroupRemoveUserResponse {
     /// Whether the request was successful.
     pub success: bool,

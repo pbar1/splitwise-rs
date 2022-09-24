@@ -3,18 +3,18 @@ use serde::{Deserialize, Serialize};
 
 use crate::model::users::User;
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct CommentsWrapper {
     pub comments: Vec<Comment>,
 }
 
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct CommentWrapper {
     pub comment: Comment,
 }
 
 /// Comment on an expense.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct Comment {
     /// Comment ID.
     pub id: i64,
@@ -44,7 +44,7 @@ pub struct Comment {
     pub user: Option<User>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct CreateCommentRequest {
     pub expense_id: i64,
     pub content: String,

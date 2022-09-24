@@ -7,13 +7,13 @@ use crate::model::{
     shared::{Balance, Image},
 };
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct UserWrapper {
     pub user: User,
 }
 
 /// Splitwise user.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct User {
     /// User's ID.
     pub id: Option<i64>,
@@ -66,7 +66,7 @@ pub struct User {
 }
 
 /// Splitwise `update_user` request.
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct UpdateUserRequest {
     /// User's first name.
     pub first_name: Option<String>,
