@@ -1,0 +1,11 @@
+[package]
+name = "splitwise-cli"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "splitwise"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "3.2.22", features = ["derive"] }
