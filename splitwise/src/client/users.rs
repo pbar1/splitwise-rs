@@ -51,8 +51,8 @@ impl<'c> UsersSvc<'c> {
 
 #[cfg(test)]
 mod integration_tests {
-    use tracing::debug;
     use test_log::test;
+    use tracing::debug;
 
     use super::*;
 
