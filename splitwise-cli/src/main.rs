@@ -1,25 +1,25 @@
-use std::path::PathBuf;
+mod mint;
+mod sync;
 
-use clap::{Parser, Subcommand};
+use anyhow::Result;
+use clap::Parser;
+
+use crate::sync::sync;
 
 /// Splitwise CLI
 #[derive(Parser)]
 #[clap(author, version, about, long_about = None)]
-struct Cli {
-    #[clap(subcommand)]
-    command: Option<Commands>,
+enum Cli {
+    Sync(sync::Args),
 }
 
-#[derive(Subcommand)]
-enum Commands {
-    /// Sync transactions matching rules to Splitwise groups
-    Sync {
-        /// Path to transaction file; if not set, will read from stdin
-        #[clap(short, long, value_parser, value_name = "FILE")]
-        file: Option<PathBuf>,
-    },
-}
+#[tokio::main]
+async fn main() -> Result<()> {
+    let cli = Cli::parse();
 
-fn main() {
-    let _cli = Cli::parse();
+    match cli {
+        Cli::Sync(args) => sync(args).await?,
+    };
+
+    Ok(())
 }
