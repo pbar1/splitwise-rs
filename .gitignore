@@ -6,3 +6,5 @@ Cargo.lock
 schemas/
 
 *.csv
+
+**/transactions.json

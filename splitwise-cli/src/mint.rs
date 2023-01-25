@@ -1,3 +1,4 @@
+use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -8,7 +9,7 @@ pub struct MintTransaction {
     pub id: String,
     pub account_id: String,
     pub account_ref: AccountRef,
-    pub date: String,
+    pub date: NaiveDate,
     pub description: String,
     pub category: Category,
     pub amount: f64,
@@ -23,7 +24,7 @@ pub struct MintTransaction {
     pub discretionary_type: String,
     pub is_linked_to_rule: bool,
     pub transaction_review_state: String,
-    pub last_updated_date: String,
+    pub last_updated_date: DateTime<Utc>,
     pub principal: Option<f64>,
     pub principal_currency: Option<String>,
     pub interest: Option<f64>,
@@ -57,7 +58,7 @@ pub struct Category {
 #[serde(rename_all = "camelCase")]
 pub struct FiData {
     pub id: Option<String>,
-    pub date: String,
+    pub date: NaiveDate,
     pub amount: f64,
     pub description: String,
     pub inferred_description: String,

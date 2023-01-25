@@ -61,7 +61,7 @@ pub struct ParseSentenceRequest {
 }
 
 /// Splitwise `parse_sentence` response.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ParseSentenceResponse {
     /// Expense object parsed from the sentence input.
     pub expense: Option<Expense>,
