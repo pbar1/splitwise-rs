@@ -1,7 +1,7 @@
-use crate::{
-    client::client::Client,
-    model::notifications::{GetNotificationsRequest, Notification, NotificationsWrapper},
-};
+use crate::client::client::Client;
+use crate::model::notifications::GetNotificationsRequest;
+use crate::model::notifications::Notification;
+use crate::model::notifications::NotificationsWrapper;
 
 /// Notifications.
 ///

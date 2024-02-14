@@ -1,15 +1,14 @@
 use anyhow::bail;
 
-use crate::{
-    client::client::{join_errors, Client},
-    model::{
-        expenses::{
-            CreateExpenseRequest, Expense, ExpenseWrapper, ExpensesWrapper, ListExpensesRequest,
-            UpdateExpenseRequest,
-        },
-        shared::Success,
-    },
-};
+use crate::client::client::join_errors;
+use crate::client::client::Client;
+use crate::model::expenses::CreateExpenseRequest;
+use crate::model::expenses::Expense;
+use crate::model::expenses::ExpenseWrapper;
+use crate::model::expenses::ExpensesWrapper;
+use crate::model::expenses::ListExpensesRequest;
+use crate::model::expenses::UpdateExpenseRequest;
+use crate::model::shared::Success;
 
 /// Expenses.
 ///

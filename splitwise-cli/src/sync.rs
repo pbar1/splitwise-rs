@@ -1,15 +1,20 @@
-use std::{
-    fs::File,
-    io::BufReader,
-    path::{Path, PathBuf},
-};
+use std::fs::File;
+use std::io::BufReader;
+use std::path::Path;
+use std::path::PathBuf;
 
 use anyhow::Result;
-use chrono::{NaiveDate, NaiveTime, TimeZone, Utc};
+use chrono::NaiveDate;
+use chrono::NaiveTime;
+use chrono::TimeZone;
+use chrono::Utc;
 use clap::Parser;
 use dialoguer::Confirm;
-use regex::{Regex, RegexBuilder};
-use splitwise::model::expenses::{CreateExpenseRequest, Expense, ListExpensesRequest};
+use regex::Regex;
+use regex::RegexBuilder;
+use splitwise::model::expenses::CreateExpenseRequest;
+use splitwise::model::expenses::Expense;
+use splitwise::model::expenses::ListExpensesRequest;
 
 use crate::mint::MintTransaction;
 

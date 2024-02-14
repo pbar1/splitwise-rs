@@ -1,5 +1,6 @@
 use chrono::Utc;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
 
 use crate::model::users::User;
 

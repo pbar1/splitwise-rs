@@ -1,10 +1,10 @@
-use crate::{
-    client::client::Client,
-    model::other::{
-        CategoriesWrapper, Category, CurrenciesWrapper, Currency, ParseSentenceRequest,
-        ParseSentenceResponse,
-    },
-};
+use crate::client::client::Client;
+use crate::model::other::CategoriesWrapper;
+use crate::model::other::Category;
+use crate::model::other::CurrenciesWrapper;
+use crate::model::other::Currency;
+use crate::model::other::ParseSentenceRequest;
+use crate::model::other::ParseSentenceResponse;
 
 /// Other.
 ///

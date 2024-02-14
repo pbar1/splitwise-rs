@@ -1,7 +1,7 @@
-use crate::{
-    client::client::Client,
-    model::users::{UpdateUserRequest, User, UserWrapper},
-};
+use crate::client::client::Client;
+use crate::model::users::UpdateUserRequest;
+use crate::model::users::User;
+use crate::model::users::UserWrapper;
 
 /// Resources to access and modify user information.
 ///

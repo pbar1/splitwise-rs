@@ -1,13 +1,14 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize, Serializer};
+use serde::Deserialize;
+use serde::Serialize;
+use serde::Serializer;
 
-use crate::model::{
-    comments::Comment,
-    other::Category,
-    shared::{Debt, Image},
-    users::User,
-};
+use crate::model::comments::Comment;
+use crate::model::other::Category;
+use crate::model::shared::Debt;
+use crate::model::shared::Image;
+use crate::model::users::User;
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct ExpenseWrapper {

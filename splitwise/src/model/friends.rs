@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize, Serializer};
+use serde::Deserialize;
+use serde::Serialize;
+use serde::Serializer;
 
-use crate::model::{shared::Balance, users::User};
+use crate::model::shared::Balance;
+use crate::model::users::User;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct FriendsWrapper {

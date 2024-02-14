@@ -1,6 +1,10 @@
-use chrono::{NaiveDate, TimeZone, Utc};
-use serde::{de::Deserializer, Deserialize};
-use splitwise::model::expenses::{CreateExpenseRequest, ListExpensesRequest};
+use chrono::NaiveDate;
+use chrono::TimeZone;
+use chrono::Utc;
+use serde::de::Deserializer;
+use serde::Deserialize;
+use splitwise::model::expenses::CreateExpenseRequest;
+use splitwise::model::expenses::ListExpensesRequest;
 
 #[allow(dead_code)]
 #[derive(Debug, Deserialize)]

@@ -1,5 +1,8 @@
-use chrono::{DateTime, NaiveDate, Utc};
-use serde::{Deserialize, Serialize};
+use chrono::DateTime;
+use chrono::NaiveDate;
+use chrono::Utc;
+use serde::Deserialize;
+use serde::Serialize;
 
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

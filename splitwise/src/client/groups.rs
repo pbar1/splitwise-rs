@@ -1,11 +1,15 @@
-use crate::{
-    client::client::Client,
-    model::groups::{
-        Group, GroupAddUserRequest, GroupAddUserResponse, GroupCreateRequest, GroupDeleteResponse,
-        GroupRemoveUserRequest, GroupRemoveUserResponse, GroupRestoreResponse, GroupUser,
-        GroupWrapper, GroupsWrapper,
-    },
-};
+use crate::client::client::Client;
+use crate::model::groups::Group;
+use crate::model::groups::GroupAddUserRequest;
+use crate::model::groups::GroupAddUserResponse;
+use crate::model::groups::GroupCreateRequest;
+use crate::model::groups::GroupDeleteResponse;
+use crate::model::groups::GroupRemoveUserRequest;
+use crate::model::groups::GroupRemoveUserResponse;
+use crate::model::groups::GroupRestoreResponse;
+use crate::model::groups::GroupUser;
+use crate::model::groups::GroupWrapper;
+use crate::model::groups::GroupsWrapper;
 
 /// A Group represents a collection of users who share expenses together. For
 /// example, some users use a Group to aggregate expenses related to an

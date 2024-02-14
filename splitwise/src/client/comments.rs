@@ -1,7 +1,8 @@
-use crate::{
-    client::client::Client,
-    model::comments::{Comment, CommentWrapper, CommentsWrapper, CreateCommentRequest},
-};
+use crate::client::client::Client;
+use crate::model::comments::Comment;
+use crate::model::comments::CommentWrapper;
+use crate::model::comments::CommentsWrapper;
+use crate::model::comments::CreateCommentRequest;
 
 /// Comments.
 ///

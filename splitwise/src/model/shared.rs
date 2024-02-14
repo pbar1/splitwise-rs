@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
 
 /// Unauthorized error.
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]

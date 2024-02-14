@@ -1,18 +1,23 @@
 use std::collections::HashMap;
 
 use anyhow::bail;
-use reqwest::{header, StatusCode};
-use secrecy::{ExposeSecret, Secret};
-use serde::{de::DeserializeOwned, Serialize};
+use reqwest::header;
+use reqwest::StatusCode;
+use secrecy::ExposeSecret;
+use secrecy::Secret;
+use serde::de::DeserializeOwned;
+use serde::Serialize;
 use url::Url;
 
-use crate::{
-    client::{
-        comments::CommentsSvc, expenses::ExpensesSvc, friends::FriendsSvc, groups::GroupsSvc,
-        notifications::NotificationsSvc, other::OtherSvc, users::UsersSvc,
-    },
-    model::shared::{ErrorForbiddenOrNotFound, ErrorUnauthorized},
-};
+use crate::client::comments::CommentsSvc;
+use crate::client::expenses::ExpensesSvc;
+use crate::client::friends::FriendsSvc;
+use crate::client::groups::GroupsSvc;
+use crate::client::notifications::NotificationsSvc;
+use crate::client::other::OtherSvc;
+use crate::client::users::UsersSvc;
+use crate::model::shared::ErrorForbiddenOrNotFound;
+use crate::model::shared::ErrorUnauthorized;
 
 /// Splitwise API client.
 #[derive(Debug, Clone)]

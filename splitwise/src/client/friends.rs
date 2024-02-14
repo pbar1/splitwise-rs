@@ -1,13 +1,10 @@
-use crate::{
-    client::client::Client,
-    model::{
-        friends::{
-            AddFriendsRequest, AddFriendsResponse, DeleteFriendResponse, FriendWrapper,
-            FriendsWrapper,
-        },
-        users::User,
-    },
-};
+use crate::client::client::Client;
+use crate::model::friends::AddFriendsRequest;
+use crate::model::friends::AddFriendsResponse;
+use crate::model::friends::DeleteFriendResponse;
+use crate::model::friends::FriendWrapper;
+use crate::model::friends::FriendsWrapper;
+use crate::model::users::User;
 
 /// Friends.
 ///
@@ -86,7 +83,8 @@ mod integration_tests {
     use tracing::debug;
 
     use super::*;
-    use crate::model::groups::{GroupCreateRequest, GroupUser};
+    use crate::model::groups::GroupCreateRequest;
+    use crate::model::groups::GroupUser;
 
     // NOTE: This test also contains `create_group`, `delete_group`,
     // `add_user_to_group`, and `remove_user_from_group`, which are from the

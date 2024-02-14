@@ -1,8 +1,10 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
 
-use crate::model::{expenses::Expense, shared::Image};
+use crate::model::expenses::Expense;
+use crate::model::shared::Image;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct CurrenciesWrapper {

@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize, Serializer};
+use serde::Deserialize;
+use serde::Serialize;
+use serde::Serializer;
 
-use crate::model::{
-    shared::{Debt, Image},
-    users::User,
-};
+use crate::model::shared::Debt;
+use crate::model::shared::Image;
+use crate::model::users::User;
 
 #[derive(Default, Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub(crate) struct GroupsWrapper {
