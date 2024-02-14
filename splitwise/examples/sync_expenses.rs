@@ -45,7 +45,7 @@ where
 async fn main() {
     println!("Sync Chase transactions to Splitwise!");
 
-    let group_id = 16263273;
+    let group_id = 43218003; // 2023
     let client = splitwise::client::Client::default();
 
     // Get a list of all expenses in a group since a certain date
@@ -65,9 +65,9 @@ async fn main() {
         let txn: ChaseTransaction = result.unwrap();
 
         // Constrain to only food/drink over $30
-        if !txn.category.to_lowercase().contains("food") || -txn.amount < 30.00 {
-            continue;
-        }
+        // if !txn.category.to_lowercase().contains("food") || -txn.amount < 30.00 {
+        //     continue;
+        // }
 
         // Check is expense already exists
         // TODO: Big bad nested loop, fix this
@@ -101,12 +101,12 @@ async fn main() {
         }
 
         // Propose creating expense
-        println!("Create expense? {:?} [y/N]", txn);
-        let y: String = text_io::read!();
-        let y = y.to_lowercase();
-        if y != "y".to_string() {
-            continue;
-        }
+        // println!("Create expense? {:?} [y/N]", txn);
+        // let y: String = text_io::read!();
+        // let y = y.to_lowercase();
+        // if y != "y".to_string() {
+        //     continue;
+        // }
 
         let date = Utc
             .from_local_date(&txn.transaction_date)

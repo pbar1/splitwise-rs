@@ -1,5 +1,3 @@
 [workspace]
-members = [
-    "splitwise",
-    "splitwise-cli",
-]
+resolver = "2"
+members = ["splitwise", "splitwise-cli"]
