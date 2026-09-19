@@ -108,7 +108,7 @@ pub struct Expense {
     pub transaction_confirmed: Option<bool>,
 
     /// Transaction ID.
-    pub transaction_id: Option<i64>,
+    pub transaction_id: Option<String>,
 
     /// Transaction status.
     pub transaction_status: Option<String>,
